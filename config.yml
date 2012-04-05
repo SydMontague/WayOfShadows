@@ -1,0 +1,20 @@
+backstab:
+    items:
+    - 359
+    multiplier: 1.5
+    chance: 1.0
+    onsneak: true
+    critmultiplier: 3.0
+    critchance: 0.5
+    critonsneak: true
+poison:
+    items:
+    - 294
+    chance: 1.0
+    duration: 5
+    onsneak: true
+hook:
+    pullitem: 287
+    blocktime: 5
+    pulltimemod: 0.33
+    maxdistance: 100
