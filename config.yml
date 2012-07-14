@@ -4,17 +4,25 @@ backstab:
     multiplier: 1.5
     chance: 1.0
     onsneak: true
+    attackermsg: "Backstab!"
+    victimmsg: "You got stabbed in the back!"
     critmultiplier: 3.0
     critchance: 0.5
     critonsneak: true
+    critmsg: "CRITICAL!"
 poison:
     items:
     - 294
     chance: 1.0
     duration: 5
+    strength: 0
     onsneak: true
 hook:
     pullitem: 287
     blocktime: 5
-    pulltimemod: 0.33
     maxdistance: 100
+    distancetoinitial: 10
+    itemsperblock: 0.01
+    errormsg: "You can't hook there!"
+    initialmsg: "You are to far away from your initial location!"
+    distancemsg: "Your hook is to far away!"

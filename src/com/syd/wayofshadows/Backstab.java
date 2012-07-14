@@ -6,25 +6,26 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class PluginEntityListener implements Listener
+public class Backstab implements Listener
 {
     WayOfShadows plugin;
     
-    public PluginEntityListener(WayOfShadows instance)
+    public Backstab(WayOfShadows instance)
     {
         plugin = instance;
     }
     
     // backstab and poison
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageByEntityEvent event)
     {
-        if (event.getDamager() instanceof Player)
+        if (!event.isCancelled() && event.getDamage() != 0 && event.getDamager() instanceof Player)
         {
             Player damager = (Player) event.getDamager();
             Entity damaged = event.getEntity();
@@ -35,30 +36,29 @@ public class PluginEntityListener implements Listener
             double poisonchance = plugin.getPoisonChance();
             double critchance = plugin.getCritChance();
             double rand = Math.random();
-            int duration = plugin.getPoisonDuration();
             
-            if ((rand <= dmgchance && damager.hasPermission("shadow.backstab") && dmgitems.contains(damager.getItemInHand().getTypeId()) && damaged.getLocation().getDirection().dot(damager.getLocation().getDirection()) > 0))
+            if ((damager.hasPermission("shadow.backstab") && rand <= dmgchance && dmgitems.contains(damager.getItemInHand().getTypeId()) && damaged.getLocation().getDirection().dot(damager.getLocation().getDirection()) > 0))
                 if (plugin.getDmgSneak() == false || damager.isSneaking())
                 {
                     rand = Math.random();
-                    if (rand <= critchance && (plugin.getCritSneak() == false || damager.isSneaking()))
+                    if (rand <= critchance && (!plugin.getCritSneak() || damager.isSneaking()))
                     {
                         event.setDamage((int) (damage * plugin.getCritMultiplier()));
-                        damager.sendMessage("CRITICAL!");
+                        damager.sendMessage(plugin.getCritAttackerMsg());
                     }
                     else
                     {
                         event.setDamage((int) (damage * plugin.getMultiplier()));
-                        damager.sendMessage("Backstab!");
+                        damager.sendMessage(plugin.getAttackerMsg());
                     }
                     if (damaged instanceof Player)
-                        ((Player) damaged).sendMessage("You got stabbed in the back!");
+                        ((Player) damaged).sendMessage(plugin.getVictimMsg());
                 }
             
             rand = Math.random();
-            if (rand <= poisonchance && damager.hasPermission("shadow.poison") && poisonitems.contains(damager.getItemInHand().getTypeId()))
-                if (plugin.getPoisonSneak() == false || damager.isSneaking())
-                    ((LivingEntity) damaged).addPotionEffect(new PotionEffect(PotionEffectType.POISON, duration, 0));
+            if (damager.hasPermission("shadow.poison") && rand <= poisonchance && poisonitems.contains(damager.getItemInHand().getTypeId()))
+                if (!plugin.getPoisonSneak() || damager.isSneaking())
+                    ((LivingEntity) damaged).addPotionEffect(new PotionEffect(PotionEffectType.POISON, plugin.getPoisonDuration(), plugin.getPoisonStrength()));
         }
     }
 }

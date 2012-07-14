@@ -1,7 +1,7 @@
 name: WayOfShadows
 main: com.syd.wayofshadows.WayOfShadows
 dev-url: http://dev.bukkit.org/server-mods/WayOfShadows
-version: 0.1
+version: 0.2
 description: Poison, backstab and hook!
 permissions:
   shadow.backstab:
