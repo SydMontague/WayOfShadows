@@ -23,9 +23,10 @@ public class WayOfShadows extends JavaPlugin
         pm.registerEvents(listener, this);
         pm.registerEvents(grapple, this);
 
-        config = getConfig();
         if (!new File(this.getDataFolder().getPath() + File.separatorChar + "config.yml").exists())
-            saveDefaultConfig();        
+            saveDefaultConfig();   
+        
+        config = getConfig();     
     }
 
     public void onDisable()
@@ -147,5 +148,10 @@ public class WayOfShadows extends JavaPlugin
     public String getHookDistanceMsg()
     {
         return config.getString("hook.distancemsg", "Your hook is to far away!");
+    }
+
+    public int getHookItem()
+    {
+        return config.getInt("hook.hookitem", 262);
     }
 }

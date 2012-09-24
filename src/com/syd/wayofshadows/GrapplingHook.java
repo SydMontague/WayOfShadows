@@ -37,10 +37,10 @@ public class GrapplingHook implements Listener
         Player player = event.getPlayer();
         Action action = event.getAction();
         
-        if ((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) && (event.getItem() != null && event.getItem().getTypeId() == 262) && player.hasPermission("shadow.hook"))
+        if ((action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) && (event.getItem() != null && event.getItem().getTypeId() == plugin.getHookItem()) && player.hasPermission("shadow.hook"))
         {
             Arrow arrow = player.launchProjectile(Arrow.class);
-            player.getInventory().removeItem(new ItemStack(262, 1));
+            player.getInventory().removeItem(new ItemStack(plugin.getHookItem(), 1));
             
             map.put(player, new Hook(arrow, false, player.getLocation()));
         }
@@ -57,6 +57,8 @@ public class GrapplingHook implements Listener
             Arrow arrow = map.get(player).arrow;
             if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) && (event.getItem() != null && event.getItem().getTypeId() == pullitem))
             {
+                event.setCancelled(true);
+                
                 Location ploc = player.getEyeLocation();
                 final Location aloc = arrow.getLocation();
                 double distance1 = ploc.distance(aloc);

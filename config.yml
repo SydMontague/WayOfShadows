@@ -19,6 +19,7 @@ poison:
     onsneak: true
 hook:
     pullitem: 287
+    hookitem: 262
     blocktime: 5
     maxdistance: 100
     distancetoinitial: 10
