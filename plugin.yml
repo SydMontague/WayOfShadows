@@ -1,14 +1,14 @@
 name: WayOfShadows
-main: com.syd.wayofshadows.WayOfShadows
+main: de.craftlancer.wayofshadows.WayOfShadows
 dev-url: http://dev.bukkit.org/server-mods/WayOfShadows
-version: 0.3
+version: 0.4
 description: Poison, backstab and hook!
 permissions:
   shadow.backstab:
     description: Backstab your enemies!
     default: false
   shadow.poison:
-    description: Poison your enemyie!
+    description: Poison your enemies!
     default: false
   shadow.hook:
     description: Hook yourself over walls

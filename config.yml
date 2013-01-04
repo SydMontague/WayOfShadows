@@ -1,22 +1,26 @@
 backstab:
     items:
-    - 359
-    multiplier: 1.5
-    chance: 1.0
-    onsneak: true
+        359:
+            chance: 1.0
+            critchance: 0.5
+            critmultiplier: 3
+            multiplier: 2
+            onsneak: true
+            critonsneak: true
+            maxangle: 90.0
     attackermsg: "Backstab!"
     victimmsg: "You got stabbed in the back!"
-    critmultiplier: 3.0
-    critchance: 0.5
-    critonsneak: true
     critmsg: "CRITICAL!"
 poison:
     items:
-    - 294
-    chance: 1.0
-    duration: 5
-    strength: 0
-    onsneak: true
+        294:
+            poison:
+                type: POISON
+                chance: 1.0
+                duration: 5
+                strength: 0
+                onsneak: true
+                maxangle: 90
 hook:
     pullitem: 287
     hookitem: 262

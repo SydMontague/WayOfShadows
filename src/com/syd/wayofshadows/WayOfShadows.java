@@ -1,115 +1,110 @@
 package com.syd.wayofshadows;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
 
 public class WayOfShadows extends JavaPlugin
 {
     public Logger log;
     public Backstab listener = new Backstab(this);
     public GrapplingHook grapple = new GrapplingHook(this);
-    FileConfiguration config;
+    public PickPocket pickpocket = new PickPocket(this);
+    private FileConfiguration config;
+    public Map<String, BackstabItem> backstabItem = new HashMap<String, BackstabItem>();
+    public Map<String, List<ItemEffect>> effectItem = new HashMap<String, List<ItemEffect>>();
     
-    
+    @Override
     public void onEnable()
     {
         log = getLogger();
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(listener, this);
         pm.registerEvents(grapple, this);
-
-        if (!new File(this.getDataFolder().getPath() + File.separatorChar + "config.yml").exists())
-            saveDefaultConfig();   
+        pm.registerEvents(pickpocket, this);
         
-        config = getConfig();     
+        if (!new File(this.getDataFolder().getPath() + File.separatorChar + "config.yml").exists())
+            saveDefaultConfig();
+        
+        config = getConfig();
+        
+        loadBackstabItems();
+        loadPoisonItems();
     }
-
+    
+    @Override
     public void onDisable()
     {
         config = null;
-    }
-
-    //config reader
-    public List<Integer> getDmgItems()
-    {
-        return config.getIntegerList("backstab.items");
+        getServer().getScheduler().cancelTasks(this);
     }
     
-    public double getMultiplier()
+    private void loadPoisonItems()
     {
-        return config.getDouble("backstab.multiplier", 1.5);
-    }
-
-    public double getDmgChance()
-    {
-        return config.getDouble("backstab.chance", 1.0);
+        String path = "poison.items";
+        
+        for (String key : config.getConfigurationSection(path).getKeys(false))
+        {
+            List<ItemEffect> list = new ArrayList<ItemEffect>();
+            for (String effect : config.getConfigurationSection(path + "." + key).getKeys(false))
+            {
+                String npath = path + "." + key + "." + effect;
+                ItemEffect i = new ItemEffect();
+                i.type = PotionEffectType.getById(config.getInt(npath + ".type")) != null ? PotionEffectType.getById(config.getInt(npath + ".type")) : PotionEffectType.getByName(config.getString(npath + ".type"));
+                i.chance = config.getDouble(npath + ".chance", 0.0D);
+                i.duration = config.getInt(npath + ".duration", 0) * 20;
+                i.strength = config.getInt(npath + ".strength", 0);
+                i.sneak = config.getBoolean(npath + ".onsneak", false);
+                i.angle = config.getDouble(npath + ".maxangle", 0.0D);
+                list.add(i);
+            }
+            effectItem.put(key, list);
+        }
     }
     
-    public boolean getDmgSneak()
+    private void loadBackstabItems()
     {
-        return config.getBoolean("backstab.onsneak", false);
+        String path = "backstab.items";
+        
+        for (String key : config.getConfigurationSection(path).getKeys(false))
+        {
+            BackstabItem i = new BackstabItem();
+            final String npath = path + "." + key;
+            i.chance = config.getDouble(npath + ".chance", 0.0D);
+            i.critchance = config.getDouble(npath + ".critchance", 0.0D);
+            i.critmultiplier = config.getDouble(npath + ".critmultiplier", 0.0D);
+            i.critsneak = config.getBoolean(npath + ".critonsneak", false);
+            i.multiplier = config.getDouble(npath + ".multiplier", 0.0D);
+            i.sneak = config.getBoolean(npath + ".onsneak", false);
+            i.angle = config.getDouble(npath + ".maxangle", 0.0D);
+            backstabItem.put(key, i);
+        }
     }
-
+    
     public String getAttackerMsg()
     {
-        return config.getString("backstab.attackermsg", "Backstab!");
-    }  
+        return setColored(config.getString("backstab.attackermsg", "Backstab!"));
+    }
     
     public String getVictimMsg()
     {
-        return config.getString("backstab.victimmsg", "You got stabbed in the back!");
-    }
-    
-    public double getCritMultiplier()
-    {
-        return config.getDouble("backstab.critmultiplier", 3.0);
-    }
-
-    public boolean getCritSneak()
-    {
-        return config.getBoolean("backstab.critonsneak", true);
-    }
-
-    public double getCritChance()
-    {
-        return config.getDouble("backstab.critchance", 0.01);
+        return setColored(config.getString("backstab.victimmsg", "You got stabbed in the back!"));
     }
     
     public String getCritAttackerMsg()
     {
-        return config.getString("backstab.critmsg", "CRITICAL!");
-    }    
-
-    public List<Integer> getPoisonItems()
-    {
-        return config.getIntegerList("poison.items");
+        return setColored(config.getString("backstab.critmsg", "CRITICAL!"));
     }
     
-    public double getPoisonChance()
-    {
-        return config.getDouble("poison.chance", 1.0);
-    }
-
-    public int getPoisonDuration()
-    {
-        return config.getInt("poison.duration", 5) * 20;
-    }
-    
-    public int getPoisonStrength()
-    {
-        return config.getInt("poison.strength", 0);
-    }
-
-    public boolean getPoisonSneak()
-    {
-        return config.getBoolean("poison.onsneak", false);
-    }
-
     public int getPullItem()
     {
         return config.getInt("hook.pullitem", 287);
@@ -119,7 +114,7 @@ public class WayOfShadows extends JavaPlugin
     {
         return config.getLong("hook.blocktime", 5) * 20;
     }
-
+    
     public double getMaxDistance()
     {
         return config.getInt("hook.maxdistance", 100);
@@ -129,29 +124,77 @@ public class WayOfShadows extends JavaPlugin
     {
         return config.getInt("hook.distancetoinitial", 10);
     }
-
+    
     public double getStringPerBlock()
     {
         return config.getDouble("hook.itemsperblock", 0.01);
     }
-
+    
     public String getHookErrorMsg()
     {
-        return config.getString("hook.errormsg", "You can't hook there!");
+        return setColored(config.getString("hook.errormsg", "You can't hook there!"));
     }
-
+    
     public String getHookInitialMsg()
     {
-        return config.getString("hook.initialmsg", "You are to far away from your initial location!");
+        return setColored(config.getString("hook.initialmsg", "You are to far away from your initial location!"));
     }
-
+    
     public String getHookDistanceMsg()
     {
-        return config.getString("hook.distancemsg", "Your hook is to far away!");
+        return setColored(config.getString("hook.distancemsg", "Your hook is to far away!"));
     }
-
+    
     public int getHookItem()
     {
         return config.getInt("hook.hookitem", 262);
     }
+    
+    public static String setColored(String string)
+    {
+        string = string.replace("&0", ChatColor.BLACK.toString());
+        string = string.replace("&1", ChatColor.DARK_BLUE.toString());
+        string = string.replace("&2", ChatColor.DARK_GREEN.toString());
+        string = string.replace("&3", ChatColor.DARK_AQUA.toString());
+        string = string.replace("&4", ChatColor.DARK_RED.toString());
+        string = string.replace("&5", ChatColor.DARK_PURPLE.toString());
+        string = string.replace("&6", ChatColor.GOLD.toString());
+        string = string.replace("&7", ChatColor.GRAY.toString());
+        string = string.replace("&8", ChatColor.DARK_GRAY.toString());
+        string = string.replace("&9", ChatColor.BLUE.toString());
+        string = string.replace("&a", ChatColor.GREEN.toString());
+        string = string.replace("&b", ChatColor.AQUA.toString());
+        string = string.replace("&c", ChatColor.RED.toString());
+        string = string.replace("&d", ChatColor.LIGHT_PURPLE.toString());
+        string = string.replace("&e", ChatColor.YELLOW.toString());
+        string = string.replace("&f", ChatColor.WHITE.toString());
+        string = string.replace("&k", ChatColor.MAGIC.toString());
+        string = string.replace("&l", ChatColor.BOLD.toString());
+        string = string.replace("&m", ChatColor.STRIKETHROUGH.toString());
+        string = string.replace("&n", ChatColor.UNDERLINE.toString());
+        string = string.replace("&o", ChatColor.ITALIC.toString());
+        string = string.replace("&r", ChatColor.RESET.toString());
+        return string;
+    }
+}
+
+class BackstabItem
+{
+    public double multiplier = 1.0;
+    public double chance = 0.0;
+    public boolean sneak = false;
+    public double critmultiplier = 1.0;
+    public double critchance = 0.0;
+    public boolean critsneak = false;
+    public double angle = 0;
+}
+
+class ItemEffect
+{
+    public double angle = 0.0;
+    public PotionEffectType type = null;
+    public double chance = 0.0;
+    public int duration = 0;
+    public int strength = 0;
+    public boolean sneak = false;
 }
