@@ -1,4 +1,4 @@
-package com.syd.wayofshadows;
+package de.craftlancer.wayofshadows;
 
 import org.bukkit.event.Listener;
 
