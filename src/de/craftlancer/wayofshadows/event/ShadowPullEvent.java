@@ -18,7 +18,6 @@ public class ShadowPullEvent extends Event implements Cancellable
     
     public ShadowPullEvent(Player p, Arrow arrow)
     {
-        super();
         this.p = p;
         this.arrow = arrow;
     }
