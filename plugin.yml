@@ -1,7 +1,7 @@
 name: WayOfShadows
 main: de.craftlancer.wayofshadows.WayOfShadows
 dev-url: http://dev.bukkit.org/server-mods/WayOfShadows
-version: 0.4
+version: 0.5_dev
 description: Poison, backstab and hook!
 permissions:
   shadow.backstab:

@@ -91,23 +91,25 @@ public class GrapplingHook extends Skill
         if (isSkillItem(event.getItem()) && hasPermission(player, event.getItem()))
         {
             Arrow arrow = player.launchProjectile(Arrow.class);
+            ItemStack item = event.getItem().clone();
+            item.setAmount(1);
             
             arrow.setMetadata("playerLocation", new FixedMetadataValue(plugin, player.getLocation()));
             player.setMetadata("hookArrow", new FixedMetadataValue(plugin, arrow));
             
-            player.getInventory().removeItem(new ItemStack(event.getItem().getType(), 1));
+            player.getInventory().removeItem(new ItemStack(item));
         }
     }
     
     @EventHandler
     public void onPull(PlayerInteractEvent e)
     {
-        if (!e.hasItem() || isPullItem(e.getItem()) || !(e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
+        if (!e.hasItem() || !isPullItem(e.getItem()) || !(e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
             return;
         
         Player player = e.getPlayer();
         
-        if (!player.hasMetadata("hookArrow") || !((Arrow) player.getMetadata("hookArrow").get(0).value()).hasMetadata("isHit"))
+        if (!player.hasMetadata("hookArrow") || player.hasMetadata("teleportArrow") || !((Arrow) player.getMetadata("hookArrow").get(0).value()).hasMetadata("isHit"))
             return;
         
         Arrow arrow = (Arrow) player.getMetadata("hookArrow").get(0).value();
@@ -126,6 +128,8 @@ public class GrapplingHook extends Skill
         double distance1 = ploc.distance(aloc);
         int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(levelSystem, player.getName()) : 0;
         int amount = (int) Math.ceil(distance1 * itemsPerBlock.getValue(level));
+        ItemStack item = e.getItem().clone();
+        item.setAmount(amount);
         
         if (distance1 > maxDistance.getIntValue(level))
         {
@@ -144,7 +148,8 @@ public class GrapplingHook extends Skill
         
         ball.setMetadata("teleportArrow", new FixedMetadataValue(plugin, true));
         player.setMetadata("teleportArrow", new FixedMetadataValue(plugin, ball.getEntityId()));
-        player.getInventory().removeItem(new ItemStack(e.getItem().getType(), amount));
+        
+        player.getInventory().removeItem(new ItemStack(item));
         
     }
     
@@ -219,7 +224,7 @@ public class GrapplingHook extends Skill
         if (pullItems.contains(item.getTypeId()))
             return true;
         
-        if (!item.hasItemMeta())
+        if (item.hasItemMeta())
             if (item.getItemMeta().hasDisplayName() && pullItemNames.contains(item.getItemMeta().getDisplayName()))
                 return true;
             else if (item.getItemMeta().hasLore())

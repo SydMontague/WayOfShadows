@@ -84,7 +84,7 @@ public class BackStab extends Skill
         else
             return;
         
-        if (!isSkillItem(item) && !hasPermission(p, item))
+        if (!isSkillItem(item) || !hasPermission(p, item))
             return;
         if (!(e.getEntity() instanceof LivingEntity) || ((LivingEntity) e.getEntity()).getNoDamageTicks() >= 1)
             return;

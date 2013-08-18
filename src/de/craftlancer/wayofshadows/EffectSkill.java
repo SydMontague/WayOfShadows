@@ -28,7 +28,7 @@ public class EffectSkill extends Skill
     {
         super(instance, key);
         FileConfiguration config = instance.getConfig();
-        type = PotionEffectType.getById(config.getInt(key + ".effectType")) != null ? PotionEffectType.getById(config.getInt(key + ".type")) : PotionEffectType.getByName(config.getString(key + ".type"));
+        type = PotionEffectType.getById(config.getInt(key + ".effectType")) != null ? PotionEffectType.getById(config.getInt(key + ".effectType")) : PotionEffectType.getByName(config.getString(key + ".effectType"));
         levelSystem = config.getString(key + ".levelSystem");
         
         chance = new ValueWrapper(config.getString(key + ".chance", "0"));
@@ -71,7 +71,7 @@ public class EffectSkill extends Skill
         else
             return;
         
-        if (!isSkillItem(item) && !hasPermission(p, item))
+        if (!isSkillItem(item) || !hasPermission(p, item))
             return;
         if (!(e.getEntity() instanceof LivingEntity) || ((LivingEntity) e.getEntity()).getNoDamageTicks() >= 1)
             return;
@@ -88,7 +88,7 @@ public class EffectSkill extends Skill
     {
         super.save(config);
         
-        config.set(getName() + ".type", "backstab");
+        config.set(getName() + ".type", "effect");
         config.set(getName() + ".effectType", type.getName());
         config.set(getName() + ".levelSystem", levelSystem);
         config.set(getName() + ".chance", chance.getInput());

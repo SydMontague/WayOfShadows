@@ -1,6 +1,7 @@
 package de.craftlancer.wayofshadows;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -10,6 +11,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import de.craftlancer.skilllevels.SkillLevels;
+import de.craftlancer.wayofshadows.metrics.Metrics;
 import de.craftlancer.wayofshadows.updater.Updater04to05;
 
 //TODO air assassination
@@ -47,6 +49,15 @@ public class WayOfShadows extends JavaPlugin
             Skill s = SkillFactory.createSkill(key, this);
             skills.add(s);
             pm.registerEvents(s, this);
+        }
+        
+        try
+        {
+            Metrics metrics = new Metrics(this);
+            metrics.start();
+        }
+        catch (IOException e)
+        {
         }
     }
     
