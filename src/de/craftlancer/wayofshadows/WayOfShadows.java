@@ -13,10 +13,15 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 
+//TODO air assassination
+//TODO pickpocket
+//TODO use Entity#getType().equals(EntityType) instead of instanceof
+//TODO define skill items via name/lore
 public class WayOfShadows extends JavaPlugin
 {
     public Logger log;
-    public Backstab listener = new Backstab(this);
+    public BackStab backstab = new BackStab(this);
+    public EffectSkill effectskill = new EffectSkill(this);
     public GrapplingHook grapple = new GrapplingHook(this);
     public PickPocket pickpocket = new PickPocket(this);
     private FileConfiguration config;
@@ -28,7 +33,8 @@ public class WayOfShadows extends JavaPlugin
     {
         log = getLogger();
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(listener, this);
+        pm.registerEvents(backstab, this);
+        pm.registerEvents(effectskill, this);
         pm.registerEvents(grapple, this);
         pm.registerEvents(pickpocket, this);
         
@@ -56,8 +62,7 @@ public class WayOfShadows extends JavaPlugin
         {
             List<ItemEffect> list = new ArrayList<ItemEffect>();
             for (String effect : config.getConfigurationSection(path + "." + key).getKeys(false))
-            {
-                
+            {                
                 String npath = path + "." + key + "." + effect;
                 ItemEffect i = new ItemEffect();
                 i.type = PotionEffectType.getById(config.getInt(npath + ".type")) != null ? PotionEffectType.getById(config.getInt(npath + ".type")) : PotionEffectType.getByName(config.getString(npath + ".type"));
