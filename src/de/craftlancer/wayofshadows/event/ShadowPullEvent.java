@@ -6,7 +6,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-//TODO make class Metadata safe
 /**
  * Called when a player tries to pull to his hook.
  */

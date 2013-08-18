@@ -2,13 +2,13 @@ package de.craftlancer.wayofshadows;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-public class PickPocket extends Skill
+public class AirAssassination extends Skill
 {
-    WayOfShadows plugin;
     
-    public PickPocket(WayOfShadows plugin, String key)
+    public AirAssassination(WayOfShadows instance, String key)
     {
-        super(plugin, key);
+        super(instance, key);
+        // TODO Auto-generated constructor stub
     }
     
     @Override
