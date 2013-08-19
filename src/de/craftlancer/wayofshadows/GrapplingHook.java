@@ -29,9 +29,7 @@ public class GrapplingHook extends Skill
     private ValueWrapper maxDistance;
     private ValueWrapper distanceToInitial;
     private ValueWrapper itemsPerBlock;
-    
-    private String levelSystem;
-    
+        
     private List<String> pullLore;
     private List<Integer> pullItems;
     private List<String> pullItemNames;
@@ -40,6 +38,7 @@ public class GrapplingHook extends Skill
     private String initialMsg;
     private String errorMsg;
     
+    //TODO update multiskill ability (metadata)
     public GrapplingHook(WayOfShadows instance, String key)
     {
         super(instance, key);
@@ -52,9 +51,7 @@ public class GrapplingHook extends Skill
         distanceMsg = config.getString(key + ".distanceMsg");
         initialMsg = config.getString(key + ".initialMsg");
         errorMsg = config.getString(key + ".errorMsg");
-        
-        levelSystem = config.getString(key + ".levelSystem");
-        
+                
         blockTime = new ValueWrapper(config.getString(key + ".blockTime", "0"));
         maxDistance = new ValueWrapper(config.getString(key + ".maxDistance", "0"));
         distanceToInitial = new ValueWrapper(config.getString(key + ".distanceToInitial", "0"));
@@ -126,7 +123,7 @@ public class GrapplingHook extends Skill
         Location ploc = player.getEyeLocation();
         final Location aloc = arrow.getLocation();
         double distance1 = ploc.distance(aloc);
-        int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(levelSystem, player.getName()) : 0;
+        int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(getLevelSys(), player.getName()) : 0;
         int amount = (int) Math.ceil(distance1 * itemsPerBlock.getValue(level));
         ItemStack item = e.getItem().clone();
         item.setAmount(amount);
@@ -183,7 +180,7 @@ public class GrapplingHook extends Skill
             
             player.teleport(loc);
             
-            int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(levelSystem, player.getName()) : 0;
+            int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(getLevelSys(), player.getName()) : 0;
             final Block block = player.getLocation().getBlock().getRelative(0, -1, 0);
             
             if (!block.getType().isSolid())
@@ -249,7 +246,6 @@ public class GrapplingHook extends Skill
         config.set(getName() + ".distanceMsg", distanceMsg);
         config.set(getName() + ".initialMsg", initialMsg);
         config.set(getName() + ".errorMsg", errorMsg);
-        config.set(getName() + ".levelSystem", levelSystem);
         
         config.set(getName() + ".blockTime", blockTime.getInput());
         config.set(getName() + ".maxDistance", maxDistance.getInput());

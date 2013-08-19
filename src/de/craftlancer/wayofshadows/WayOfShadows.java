@@ -16,6 +16,11 @@ import de.craftlancer.wayofshadows.updater.Updater04to05;
 
 //TODO air assassination
 //TODO pickpocket
+//TODO call SkillLevels on Skill execution (for XP rewards)
+//TODO add more Events
+//TODO cooldowns
+//TODO check EventHandlers for their priorities
+//TODO refactor the folder/package structure of the plugin
 public class WayOfShadows extends JavaPlugin
 {
     public Logger log;
@@ -46,7 +51,9 @@ public class WayOfShadows extends JavaPlugin
             if (key.equalsIgnoreCase("configVersion"))
                 continue;
             
-            Skill s = SkillFactory.createSkill(key, this);
+            Skill s = SkillFactory.createSkill(key, this);            
+            if(s == null)
+                continue;            
             skills.add(s);
             pm.registerEvents(s, this);
         }

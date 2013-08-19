@@ -4,6 +4,12 @@ public class SkillFactory
 {
     public static Skill createSkill(String key, WayOfShadows plugin)
     {
+        if(!plugin.getConfig().isSet(key + ".type"))
+        {
+            plugin.log.severe("Missing 'type' node in Skill \"" + key + "\"!");
+            return null;
+        }
+        
         if (plugin.getConfig().getString(key + ".type").equalsIgnoreCase("backstab"))
             return new BackStab(plugin, key);
         else if (plugin.getConfig().getString(key + ".type").equalsIgnoreCase("effect"))
@@ -15,6 +21,7 @@ public class SkillFactory
         else if (plugin.getConfig().getString(key + ".type").equalsIgnoreCase("airassassination"))
             return new AirAssassination(plugin, key);
         
-        throw new IllegalArgumentException("The skill \"" + key + "\" has no valid type!");
+        plugin.log.severe("Wrong 'type' node in Skill \"" + key + "\"! Valid types are 'backstab', 'effect', 'grapplinghook', 'pickpocket' and 'airassassination'.");
+        return null;
     }
 }

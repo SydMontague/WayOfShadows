@@ -25,6 +25,14 @@ public class ValueWrapper
             return Double.valueOf(getMathResult(input, level, input)).doubleValue();
     }
     
+    public double getValue(int level, int int2)
+    {
+        if (value != null)
+            return value;
+        else
+            return Double.valueOf(getMathResult(input, level, int2));
+    }
+    
     public int getIntValue(int level)
     {
         if (value != null)
@@ -36,6 +44,12 @@ public class ValueWrapper
     public String getInput()
     {
         return input;
+    }
+    
+    private String getMathResult(String form, double x, double y)
+    {
+        form = form.replace("y", String.valueOf(y));
+        return getMathResult(form, x, form);
     }
     
     private String getMathResult(String form, double x, String completForm)
@@ -81,8 +95,6 @@ public class ValueWrapper
                 form = form.replace(s, String.valueOf(Math.log(Double.valueOf(getMathResult(s.replace("log", ""), x, completForm)))));
             else if (s.contains("sqrt"))
                 form = form.replace(s, String.valueOf(Math.sqrt(Double.valueOf(getMathResult(s.replace("sqrt", ""), x, completForm)))));
-            else if (s.contains("recur"))
-                form = form.replace(s, String.valueOf(getMathResult(completForm, Double.valueOf(s.replace("recur", "")), completForm)));
             else if (s.contains("^"))
                 form = form.replace(s, String.valueOf(Math.pow(Double.valueOf(getMathResult(s.substring(0, s.indexOf("^")), x, completForm)), Double.valueOf(getMathResult(s.substring(s.indexOf("^") + 1), x, completForm)))));
         

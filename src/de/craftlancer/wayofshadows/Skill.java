@@ -17,6 +17,7 @@ public abstract class Skill implements Listener
     private List<String> lore;
     private List<Integer> items;
     private List<String> itemNames;
+    private String levelSystem;
     
     public Skill(WayOfShadows instance, String key)
     {
@@ -25,6 +26,7 @@ public abstract class Skill implements Listener
         lore = instance.getConfig().getStringList(key + ".lore");
         items = instance.getConfig().getIntegerList(key + ".items");
         itemNames = instance.getConfig().getStringList(key + ".names");
+        levelSystem = instance.getConfig().getString(key + ".levelSystem");
     }
     
     public Skill(WayOfShadows instance, String key, String item)
@@ -59,6 +61,11 @@ public abstract class Skill implements Listener
         return items;
     }
     
+    public String getLevelSys()
+    {
+        return levelSystem;
+    }
+    
     public double getAngle(Vector vec1, Vector vec2)
     {
         return vec1.angle(vec2) * 180 / Math.PI;
@@ -86,10 +93,13 @@ public abstract class Skill implements Listener
     
     public boolean isSkillItem(ItemStack item)
     {
+        if (getItemIds().isEmpty() && getItemNames().isEmpty() && getLore().isEmpty())
+            return true;
+        
         if (getItemIds().contains(item.getTypeId()))
             return true;
         
-        if (!item.hasItemMeta())
+        if (item.hasItemMeta())
             if (item.getItemMeta().hasDisplayName() && getItemNames().contains(item.getItemMeta().getDisplayName()))
                 return true;
             else if (item.getItemMeta().hasLore())
@@ -106,5 +116,6 @@ public abstract class Skill implements Listener
         config.set(getName() + ".lore", lore);
         config.set(getName() + ".items", items);
         config.set(getName() + ".itemNames", itemNames);
+        config.set(getName() + ".levelSystem", getLevelSys());
     }
 }

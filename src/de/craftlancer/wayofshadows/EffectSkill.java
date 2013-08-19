@@ -22,17 +22,15 @@ public class EffectSkill extends Skill
     private ValueWrapper duration;
     private ValueWrapper strength;
     private boolean onSneak;
-    private String levelSystem;
     
     public EffectSkill(WayOfShadows instance, String key)
     {
         super(instance, key);
         FileConfiguration config = instance.getConfig();
         type = PotionEffectType.getById(config.getInt(key + ".effectType")) != null ? PotionEffectType.getById(config.getInt(key + ".effectType")) : PotionEffectType.getByName(config.getString(key + ".effectType"));
-        levelSystem = config.getString(key + ".levelSystem");
-        
+
         chance = new ValueWrapper(config.getString(key + ".chance", "0"));
-        maxAngle = new ValueWrapper(config.getString(key + ".maxAngle", "0"));
+        maxAngle = new ValueWrapper(config.getString(key + ".maxAngle", "90"));
         
         duration = new ValueWrapper(config.getString(key + ".duration", "0"));
         strength = new ValueWrapper(config.getString(key + ".strength", "0"));
@@ -77,7 +75,7 @@ public class EffectSkill extends Skill
             return;
         
         double angle = getAngle(p.getLocation().getDirection(), e.getEntity().getLocation().getDirection());
-        int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(levelSystem, p.getName()) : 0;
+        int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(getLevelSys(), p.getName()) : 0;
         
         if (Math.random() <= chance.getValue(level) && angle < maxAngle.getValue(level) && (!onSneak || p.isSneaking()))
             ((LivingEntity) e.getEntity()).addPotionEffect(new PotionEffect(type, duration.getIntValue(level), strength.getIntValue(level)));
@@ -90,7 +88,6 @@ public class EffectSkill extends Skill
         
         config.set(getName() + ".type", "effect");
         config.set(getName() + ".effectType", type.getName());
-        config.set(getName() + ".levelSystem", levelSystem);
         config.set(getName() + ".chance", chance.getInput());
         config.set(getName() + ".maxAngle", maxAngle.getInput());
         config.set(getName() + ".duration", duration.getInput());

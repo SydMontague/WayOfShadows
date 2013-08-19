@@ -21,7 +21,6 @@ public class BackStab extends Skill
     private ValueWrapper maxAngle;
     private boolean onSneak;
     private boolean critOnSneak;
-    private String levelSystem;
     
     private String attackerMsg;
     private String victimMsg;
@@ -37,11 +36,10 @@ public class BackStab extends Skill
         critChance = new ValueWrapper(config.getString(key + ".critChance", "0"));
         multiplier = new ValueWrapper(config.getString(key + ".multiplier", "1"));
         critMultiplier = new ValueWrapper(config.getString(key + ".critMultiplier", "1"));
-        maxAngle = new ValueWrapper(config.getString(key + ".maxAngle", "0"));
+        maxAngle = new ValueWrapper(config.getString(key + ".maxAngle", "90"));
         
         onSneak = config.getBoolean(key + ".onSneak", false);
         critOnSneak = config.getBoolean(key + ".critOnSneak", false);
-        levelSystem = config.getString(key + ".levelSystem");
         
         attackerMsg = config.getString(key + ".attackerMsg");
         victimMsg = config.getString(key + ".victimMsg");
@@ -90,7 +88,7 @@ public class BackStab extends Skill
             return;
         
         double angle = getAngle(e.getEntity().getLocation().getDirection(), p.getLocation().getDirection());
-        int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(levelSystem, p.getName()) : 0;
+        int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(getLevelSys(), p.getName()) : 0;
         
         if (angle < maxAngle.getValue(level) && (!onSneak || p.isSneaking()) && Math.random() <= chance.getValue(level))
         {
@@ -122,7 +120,6 @@ public class BackStab extends Skill
         
         config.set(getName() + ".onSneak", onSneak);
         config.set(getName() + ".critOnSneak", critOnSneak);
-        config.set(getName() + ".levelSystem", levelSystem);
         
         config.set(getName() + ".attackerMsg", attackerMsg);
         config.set(getName() + ".victimMsg", victimMsg);
