@@ -1,4 +1,4 @@
-package de.craftlancer.wayofshadows;
+package de.craftlancer.wayofshadows.utils;
 
 public class ValueWrapper
 {

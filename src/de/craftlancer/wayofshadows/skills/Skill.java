@@ -1,4 +1,4 @@
-package de.craftlancer.wayofshadows;
+package de.craftlancer.wayofshadows.skills;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
+import org.bukkit.metadata.FixedMetadataValue;
+
+import de.craftlancer.wayofshadows.WayOfShadows;
+import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
 public abstract class Skill implements Listener
 {
@@ -18,6 +21,8 @@ public abstract class Skill implements Listener
     private List<Integer> items;
     private List<String> itemNames;
     private String levelSystem;
+    private String cooldownMsg;
+    private ValueWrapper cooldown;
     
     public Skill(WayOfShadows instance, String key)
     {
@@ -27,6 +32,8 @@ public abstract class Skill implements Listener
         items = instance.getConfig().getIntegerList(key + ".items");
         itemNames = instance.getConfig().getStringList(key + ".names");
         levelSystem = instance.getConfig().getString(key + ".levelSystem");
+        cooldown = new ValueWrapper(instance.getConfig().getString(key + ".cooldown", "0"));
+        cooldownMsg = instance.getConfig().getString(key + ".cooldownMsg", "This skill for %time% seconds on cooldown!");
     }
     
     public Skill(WayOfShadows instance, String key, String item)
@@ -66,9 +73,26 @@ public abstract class Skill implements Listener
         return levelSystem;
     }
     
-    public double getAngle(Vector vec1, Vector vec2)
+    public String getCooldownMsg(Player p)
     {
-        return vec1.angle(vec2) * 180 / Math.PI;
+        return cooldownMsg.replace("%time%", String.valueOf(getRemainingCooldown(p)));
+    }
+    
+    public boolean isOnCooldown(Player p)
+    {
+        return p.hasMetadata("cooldown." + getName()) && p.getMetadata("cooldown." + getName()).get(0).asLong() >= System.currentTimeMillis();
+    }
+    
+    public void setOnCooldown(Player p)
+    {
+        long time = System.currentTimeMillis();
+        int level = plugin.getLevel(p, levelSystem);
+        p.setMetadata("cooldown." + getName(), new FixedMetadataValue(plugin, time + (cooldown.getValue(level) * 1000)));
+    }
+    
+    public double getRemainingCooldown(Player p)
+    {
+        return (p.getMetadata("cooldown." + getName()).get(0).asLong() - System.currentTimeMillis()) / 1000;
     }
     
     public boolean hasPermission(Player p, ItemStack item)
@@ -79,14 +103,16 @@ public abstract class Skill implements Listener
         if (p.hasPermission("shadow." + getName() + "." + item.getTypeId()))
             return true;
         
-        if (p.hasPermission("shadow." + getName() + "." + item.getItemMeta().getDisplayName()))
-            return true;
-        
-        if (item.getItemMeta().hasLore())
-            for (String str : getLore())
-                for (String str2 : item.getItemMeta().getLore())
-                    if (str2.contains(str) && p.hasPermission("shadow." + getName() + "." + str))
-                        return true;
+        if (item.hasItemMeta())
+        {
+            if (p.hasPermission("shadow." + getName() + "." + item.getItemMeta().getDisplayName()))
+                return true;
+            if (item.getItemMeta().hasLore())
+                for (String str : getLore())
+                    for (String str2 : item.getItemMeta().getLore())
+                        if (str2.contains(str) && p.hasPermission("shadow." + getName() + "." + str))
+                            return true;
+        }
         
         return false;
     }

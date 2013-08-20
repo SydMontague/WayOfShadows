@@ -1,4 +1,4 @@
-package de.craftlancer.wayofshadows;
+package de.craftlancer.wayofshadows.skills;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
@@ -8,6 +8,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
+
+import de.craftlancer.wayofshadows.WayOfShadows;
+import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
 public class AirAssassination extends Skill
 {
@@ -50,12 +53,18 @@ public class AirAssassination extends Skill
         if (!isSkillItem(item) || !hasPermission(p, item))
             return;
         
-        int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(getLevelSys(), p.getName()) : 0;
+        int level = plugin.getLevel(p, getLevelSys());
         
         if (p.getFallDistance() < minHeight.getValue(level))
             return;
         
         double height = ((p.getFallDistance() - minHeight.getValue(level)) < maxHeight.getValue(level) ? p.getFallDistance() - minHeight.getValue(level) : maxHeight.getValue(level));
+        
+        if (isOnCooldown(p))
+        {
+            p.sendMessage(getCooldownMsg(p));
+            return;
+        }
         
         if (Math.random() <= chance.getValue(level))
         {
@@ -63,6 +72,8 @@ public class AirAssassination extends Skill
             if (negateFallDamage)
                 p.setFallDistance(0);
         }
+        
+        setOnCooldown(p);
     }
     
     @Override

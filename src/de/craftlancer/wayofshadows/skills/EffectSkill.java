@@ -1,4 +1,4 @@
-package de.craftlancer.wayofshadows;
+package de.craftlancer.wayofshadows.skills;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
@@ -12,7 +12,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.updater.ItemEffect;
+import de.craftlancer.wayofshadows.utils.Utils;
+import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
 public class EffectSkill extends Skill
 {
@@ -28,7 +31,7 @@ public class EffectSkill extends Skill
         super(instance, key);
         FileConfiguration config = instance.getConfig();
         type = PotionEffectType.getById(config.getInt(key + ".effectType")) != null ? PotionEffectType.getById(config.getInt(key + ".effectType")) : PotionEffectType.getByName(config.getString(key + ".effectType"));
-
+        
         chance = new ValueWrapper(config.getString(key + ".chance", "0"));
         maxAngle = new ValueWrapper(config.getString(key + ".maxAngle", "90"));
         
@@ -74,11 +77,22 @@ public class EffectSkill extends Skill
         if (!(e.getEntity() instanceof LivingEntity) || ((LivingEntity) e.getEntity()).getNoDamageTicks() >= 1)
             return;
         
-        double angle = getAngle(p.getLocation().getDirection(), e.getEntity().getLocation().getDirection());
-        int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(getLevelSys(), p.getName()) : 0;
+        double angle = Utils.getAngle(p.getLocation().getDirection(), e.getEntity().getLocation().getDirection());
+        int level = plugin.getLevel(p, getLevelSys());
         
-        if (Math.random() <= chance.getValue(level) && angle < maxAngle.getValue(level) && (!onSneak || p.isSneaking()))
-            ((LivingEntity) e.getEntity()).addPotionEffect(new PotionEffect(type, duration.getIntValue(level), strength.getIntValue(level)));
+        if (angle < maxAngle.getValue(level) && (!onSneak || p.isSneaking()))
+        {
+            if (isOnCooldown(p))
+            {
+                p.sendMessage(getCooldownMsg(p));
+                return;
+            }
+            
+            if (Math.random() <= chance.getValue(level))
+                ((LivingEntity) e.getEntity()).addPotionEffect(new PotionEffect(type, duration.getIntValue(level), strength.getIntValue(level)));
+            
+            setOnCooldown(p);
+        }
     }
     
     @Override

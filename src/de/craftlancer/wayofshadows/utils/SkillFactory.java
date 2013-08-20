@@ -1,10 +1,18 @@
-package de.craftlancer.wayofshadows;
+package de.craftlancer.wayofshadows.utils;
+
+import de.craftlancer.wayofshadows.WayOfShadows;
+import de.craftlancer.wayofshadows.skills.AirAssassination;
+import de.craftlancer.wayofshadows.skills.BackStab;
+import de.craftlancer.wayofshadows.skills.EffectSkill;
+import de.craftlancer.wayofshadows.skills.GrapplingHook;
+import de.craftlancer.wayofshadows.skills.PickPocket;
+import de.craftlancer.wayofshadows.skills.Skill;
 
 public class SkillFactory
 {
     public static Skill createSkill(String key, WayOfShadows plugin)
     {
-        if(!plugin.getConfig().isSet(key + ".type"))
+        if (!plugin.getConfig().isSet(key + ".type"))
         {
             plugin.log.severe("Missing 'type' node in Skill \"" + key + "\"!");
             return null;

@@ -1,4 +1,4 @@
-package de.craftlancer.wayofshadows;
+package de.craftlancer.wayofshadows.skills;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.event.ShadowPullEvent;
+import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
 public class GrapplingHook extends Skill
 {
@@ -29,7 +31,7 @@ public class GrapplingHook extends Skill
     private ValueWrapper maxDistance;
     private ValueWrapper distanceToInitial;
     private ValueWrapper itemsPerBlock;
-        
+    
     private List<String> pullLore;
     private List<Integer> pullItems;
     private List<String> pullItemNames;
@@ -38,7 +40,6 @@ public class GrapplingHook extends Skill
     private String initialMsg;
     private String errorMsg;
     
-    //TODO update multiskill ability (metadata)
     public GrapplingHook(WayOfShadows instance, String key)
     {
         super(instance, key);
@@ -51,7 +52,7 @@ public class GrapplingHook extends Skill
         distanceMsg = config.getString(key + ".distanceMsg");
         initialMsg = config.getString(key + ".initialMsg");
         errorMsg = config.getString(key + ".errorMsg");
-                
+        
         blockTime = new ValueWrapper(config.getString(key + ".blockTime", "0"));
         maxDistance = new ValueWrapper(config.getString(key + ".maxDistance", "0"));
         distanceToInitial = new ValueWrapper(config.getString(key + ".distanceToInitial", "0"));
@@ -83,18 +84,24 @@ public class GrapplingHook extends Skill
         if (!event.hasItem() || !(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
             return;
         
-        Player player = event.getPlayer();
+        Player p = event.getPlayer();
         
-        if (isSkillItem(event.getItem()) && hasPermission(player, event.getItem()))
+        if (isSkillItem(event.getItem()) && hasPermission(p, event.getItem()))
         {
-            Arrow arrow = player.launchProjectile(Arrow.class);
+            if (isOnCooldown(p))
+            {
+                p.sendMessage(getCooldownMsg(p));
+                return;
+            }
+            
+            Arrow arrow = p.launchProjectile(Arrow.class);
             ItemStack item = event.getItem().clone();
             item.setAmount(1);
             
-            arrow.setMetadata("playerLocation", new FixedMetadataValue(plugin, player.getLocation()));
-            player.setMetadata("hookArrow", new FixedMetadataValue(plugin, arrow));
+            arrow.setMetadata(getName() + ".playerLocation", new FixedMetadataValue(plugin, p.getLocation()));
+            p.setMetadata(getName() + ".hookArrow", new FixedMetadataValue(plugin, arrow));
             
-            player.getInventory().removeItem(new ItemStack(item));
+            p.getInventory().removeItem(new ItemStack(item));
         }
     }
     
@@ -104,15 +111,15 @@ public class GrapplingHook extends Skill
         if (!e.hasItem() || !isPullItem(e.getItem()) || !(e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
             return;
         
-        Player player = e.getPlayer();
+        Player p = e.getPlayer();
         
-        if (!player.hasMetadata("hookArrow") || player.hasMetadata("teleportArrow") || !((Arrow) player.getMetadata("hookArrow").get(0).value()).hasMetadata("isHit"))
+        if (!p.hasMetadata(getName() + ".hookArrow") || p.hasMetadata(getName() + ".teleportArrow") || !((Arrow) p.getMetadata(getName() + ".hookArrow").get(0).value()).hasMetadata(getName() + ".isHit"))
             return;
         
-        Arrow arrow = (Arrow) player.getMetadata("hookArrow").get(0).value();
-        Location initLoc = (Location) arrow.getMetadata("playerLocation").get(0).value();
+        Arrow arrow = (Arrow) p.getMetadata(getName() + ".hookArrow").get(0).value();
+        Location initLoc = (Location) arrow.getMetadata(getName() + ".playerLocation").get(0).value();
         
-        ShadowPullEvent event = new ShadowPullEvent(player, arrow);
+        ShadowPullEvent event = new ShadowPullEvent(p, arrow);
         Bukkit.getServer().getPluginManager().callEvent(event);
         
         if (event.isCancelled())
@@ -120,34 +127,35 @@ public class GrapplingHook extends Skill
         
         e.setCancelled(true);
         
-        Location ploc = player.getEyeLocation();
+        Location ploc = p.getEyeLocation();
         final Location aloc = arrow.getLocation();
         double distance1 = ploc.distance(aloc);
-        int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(getLevelSys(), player.getName()) : 0;
+        int level = plugin.getLevel(p, getLevelSys());
         int amount = (int) Math.ceil(distance1 * itemsPerBlock.getValue(level));
         ItemStack item = e.getItem().clone();
         item.setAmount(amount);
         
         if (distance1 > maxDistance.getIntValue(level))
         {
-            player.sendMessage(distanceMsg);
+            p.sendMessage(distanceMsg);
             return;
         }
         
         if (ploc.distance(initLoc) > distanceToInitial.getIntValue(level))
         {
-            player.sendMessage(initialMsg);
+            p.sendMessage(initialMsg);
             return;
         }
         
-        player.teleport(initLoc);
-        Arrow ball = player.launchProjectile(Arrow.class);
+        p.teleport(initLoc);
+        Arrow ball = p.launchProjectile(Arrow.class);
         
-        ball.setMetadata("teleportArrow", new FixedMetadataValue(plugin, true));
-        player.setMetadata("teleportArrow", new FixedMetadataValue(plugin, ball.getEntityId()));
+        ball.setMetadata(getName() + ".teleportArrow", new FixedMetadataValue(plugin, true));
+        p.setMetadata(getName() + ".teleportArrow", new FixedMetadataValue(plugin, ball.getEntityId()));
         
-        player.getInventory().removeItem(new ItemStack(item));
+        p.getInventory().removeItem(new ItemStack(item));
         
+        setOnCooldown(p);
     }
     
     @EventHandler
@@ -156,32 +164,32 @@ public class GrapplingHook extends Skill
         if (!event.getEntity().getType().equals(EntityType.ARROW) || !event.getEntity().getShooter().getType().equals(EntityType.PLAYER))
             return;
         
-        Player player = (Player) event.getEntity().getShooter();
+        Player p = (Player) event.getEntity().getShooter();
         Arrow arrow = (Arrow) event.getEntity();
         
-        if (arrow.hasMetadata("playerLocation"))
+        if (arrow.hasMetadata(getName() + ".playerLocation"))
         {
-            arrow.setMetadata("isHit", new FixedMetadataValue(plugin, true));
+            arrow.setMetadata(getName() + ".isHit", new FixedMetadataValue(plugin, true));
             return;
         }
         
-        if (player.hasMetadata("teleportArrow") && (arrow.getEntityId() == player.getMetadata("teleportArrow").get(0).asInt()))
+        if (p.hasMetadata(getName() + ".teleportArrow") && (arrow.getEntityId() == p.getMetadata(getName() + ".teleportArrow").get(0).asInt()))
         {
             Location loc = arrow.getLocation();
             arrow.remove();
             
             if ((loc.getBlock().getType().isSolid() || loc.getBlock().getRelative(0, 1, 0).getType().isSolid() || loc.getBlock().getRelative(0, 2, 0).getType().isSolid()))
             {
-                player.sendMessage(errorMsg);
-                player.removeMetadata("teleportArrow", plugin);
-                player.removeMetadata("hookArrow", plugin);
+                p.sendMessage(errorMsg);
+                p.removeMetadata(getName() + ".teleportArrow", plugin);
+                p.removeMetadata(getName() + ".hookArrow", plugin);
                 return;
             }
             
-            player.teleport(loc);
+            p.teleport(loc);
             
-            int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(getLevelSys(), player.getName()) : 0;
-            final Block block = player.getLocation().getBlock().getRelative(0, -1, 0);
+            int level = plugin.getLevel(p, getLevelSys());
+            final Block block = p.getLocation().getBlock().getRelative(0, -1, 0);
             
             if (!block.getType().isSolid())
             {
@@ -198,9 +206,9 @@ public class GrapplingHook extends Skill
                 }.runTaskLater(plugin, blockTime.getIntValue(level));
             }
             
-            player.setFallDistance(0);
-            player.removeMetadata("teleportArrow", plugin);
-            player.removeMetadata("hookArrow", plugin);
+            p.setFallDistance(0);
+            p.removeMetadata(getName() + ".teleportArrow", plugin);
+            p.removeMetadata(getName() + ".hookArrow", plugin);
         }
     }
     
@@ -212,7 +220,7 @@ public class GrapplingHook extends Skill
         
         Arrow arrow = (Arrow) event.getDamager();
         
-        if (arrow.hasMetadata("teleportArrow") || arrow.hasMetadata("playerLocation"))
+        if (arrow.hasMetadata(getName() + ".teleportArrow") || arrow.hasMetadata(getName() + ".playerLocation"))
             event.setCancelled(true);
     }
     

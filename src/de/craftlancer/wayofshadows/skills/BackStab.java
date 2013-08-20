@@ -1,4 +1,4 @@
-package de.craftlancer.wayofshadows;
+package de.craftlancer.wayofshadows.skills;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
@@ -10,7 +10,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
+import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.updater.BackstabItem;
+import de.craftlancer.wayofshadows.utils.Utils;
+import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
 public class BackStab extends Skill
 {
@@ -87,11 +90,17 @@ public class BackStab extends Skill
         if (!(e.getEntity() instanceof LivingEntity) || ((LivingEntity) e.getEntity()).getNoDamageTicks() >= 1)
             return;
         
-        double angle = getAngle(e.getEntity().getLocation().getDirection(), p.getLocation().getDirection());
-        int level = plugin.getSkillLevels() != null ? plugin.getSkillLevels().getUserLevel(getLevelSys(), p.getName()) : 0;
+        double angle = Utils.getAngle(e.getEntity().getLocation().getDirection(), p.getLocation().getDirection());
+        int level = plugin.getLevel(p, getLevelSys());
         
         if (angle < maxAngle.getValue(level) && (!onSneak || p.isSneaking()) && Math.random() <= chance.getValue(level))
         {
+            if (isOnCooldown(p))
+            {
+                p.sendMessage(getCooldownMsg(p));
+                return;
+            }
+            
             if (Math.random() <= critChance.getValue(level) && (!critOnSneak || p.isSneaking()))
             {
                 e.setDamage(e.getDamage() * critMultiplier.getValue(level));
@@ -104,7 +113,10 @@ public class BackStab extends Skill
             }
             if (e.getEntity().getType().equals(EntityType.PLAYER))
                 ((Player) e.getEntity()).sendMessage(victimMsg);
+            
+            setOnCooldown(p);
         }
+        
     }
     
     @Override

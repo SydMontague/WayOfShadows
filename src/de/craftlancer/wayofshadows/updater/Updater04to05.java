@@ -12,11 +12,11 @@ import java.util.Map.Entry;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.potion.PotionEffectType;
 
-import de.craftlancer.wayofshadows.BackStab;
-import de.craftlancer.wayofshadows.EffectSkill;
-import de.craftlancer.wayofshadows.GrapplingHook;
-import de.craftlancer.wayofshadows.Skill;
 import de.craftlancer.wayofshadows.WayOfShadows;
+import de.craftlancer.wayofshadows.skills.BackStab;
+import de.craftlancer.wayofshadows.skills.EffectSkill;
+import de.craftlancer.wayofshadows.skills.GrapplingHook;
+import de.craftlancer.wayofshadows.skills.Skill;
 
 public class Updater04to05
 {
@@ -26,7 +26,7 @@ public class Updater04to05
     public Updater04to05(WayOfShadows plugin)
     {
         this.plugin = plugin;
-        this.config = plugin.getConfig();
+        config = plugin.getConfig();
     }
     
     public void update()
@@ -118,4 +118,3 @@ public class Updater04to05
         return tmp;
     }
 }
-
