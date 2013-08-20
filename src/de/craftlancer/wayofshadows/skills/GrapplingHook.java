@@ -119,7 +119,7 @@ public class GrapplingHook extends Skill
         Arrow arrow = (Arrow) p.getMetadata(getName() + ".hookArrow").get(0).value();
         Location initLoc = (Location) arrow.getMetadata(getName() + ".playerLocation").get(0).value();
         
-        ShadowPullEvent event = new ShadowPullEvent(p, arrow);
+        ShadowPullEvent event = new ShadowPullEvent(p, arrow, this);
         Bukkit.getServer().getPluginManager().callEvent(event);
         
         if (event.isCancelled())
@@ -128,7 +128,7 @@ public class GrapplingHook extends Skill
         e.setCancelled(true);
         
         Location ploc = p.getEyeLocation();
-        final Location aloc = arrow.getLocation();
+        Location aloc = arrow.getLocation();
         double distance1 = ploc.distance(aloc);
         int level = plugin.getLevel(p, getLevelSys());
         int amount = (int) Math.ceil(distance1 * itemsPerBlock.getValue(level));

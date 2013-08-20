@@ -21,10 +21,10 @@ import de.craftlancer.wayofshadows.updater.Updater04to05;
 import de.craftlancer.wayofshadows.utils.SkillFactory;
 
 //TODO call SkillLevels on Skill execution (for XP rewards)
-//TODO add more Events
 //TODO check EventHandlers for their priorities
 //TODO add javaDocs
 //TODO pickpocket for chests - low prio
+//TODO update internal config.yml
 //TOTEST everything! (especially ValueCatalogue)
 public class WayOfShadows extends JavaPlugin
 {
@@ -48,6 +48,11 @@ public class WayOfShadows extends JavaPlugin
         if (!new File(getDataFolder().getPath() + File.separatorChar + "config.yml").exists())
             saveDefaultConfig();
         
+        valueConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "values.yml"));
+        
+        for (String key : valueConfig.getKeys(false))
+            valCatalogue.put(key, new ValueCatalogue(this, valueConfig, key));
+        
         config = getConfig();
         
         if (!config.isSet("configVersion"))
@@ -64,11 +69,6 @@ public class WayOfShadows extends JavaPlugin
             skills.add(s);
             pm.registerEvents(s, this);
         }
-        
-        valueConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "values.yml"));
-        
-        for (String key : valueConfig.getKeys(false))
-            valCatalogue.put(key, new ValueCatalogue(this, valueConfig, key));
         
         try
         {

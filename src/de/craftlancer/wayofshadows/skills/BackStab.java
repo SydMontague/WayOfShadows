@@ -1,5 +1,6 @@
 package de.craftlancer.wayofshadows.skills;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -11,6 +12,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.craftlancer.wayofshadows.WayOfShadows;
+import de.craftlancer.wayofshadows.event.ShadowBackstabEvent;
 import de.craftlancer.wayofshadows.updater.BackstabItem;
 import de.craftlancer.wayofshadows.utils.Utils;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
@@ -100,6 +102,12 @@ public class BackStab extends Skill
                 p.sendMessage(getCooldownMsg(p));
                 return;
             }
+            
+            ShadowBackstabEvent event = new ShadowBackstabEvent(p, e.getEntity(), this);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            
+            if (event.isCancelled())
+                return;
             
             if (Math.random() <= critChance.getValue(level) && (!critOnSneak || p.isSneaking()))
             {

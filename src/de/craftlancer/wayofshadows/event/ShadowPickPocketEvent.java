@@ -1,29 +1,28 @@
 package de.craftlancer.wayofshadows.event;
 
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
 
-import de.craftlancer.wayofshadows.skills.GrapplingHook;
+import de.craftlancer.wayofshadows.skills.PickPocket;
 
-/**
- * Called when a player tries to pull to his hook.
- */
-public class ShadowPullEvent extends Event implements Cancellable
+public class ShadowPickPocketEvent extends Event implements Cancellable
 {
     private static final HandlerList handlers = new HandlerList();
     private Player player;
-    private Arrow arrow;
-    private GrapplingHook skill;
+    private Player victim;
+    private PickPocket skill;
+    private ItemStack item;
     private boolean cancel = false;
     
-    public ShadowPullEvent(Player player, Arrow arrow, GrapplingHook skill)
+    public ShadowPickPocketEvent(Player player, Player victim, PickPocket skill, ItemStack item)
     {
         this.player = player;
-        this.arrow = arrow;
+        this.victim = victim;
         this.skill = skill;
+        this.item = item;
     }
     
     /**
@@ -36,29 +35,19 @@ public class ShadowPullEvent extends Event implements Cancellable
         return player;
     }
     
-    /**
-     * Get the arrow to which location the player tries to pull himself
-     * 
-     * @return the arrow
-     */
-    public Arrow getArrow()
+    public Player getVictim()
     {
-        return arrow;
+        return victim;
     }
     
-    /**
-     * Get the distance between Player and Arrow
-     * 
-     * @return the distance between Player and Arrow
-     */
-    public double getDistance()
-    {
-        return player.getEyeLocation().distance(arrow.getLocation());
-    }
-    
-    public GrapplingHook getSkill()
+    public PickPocket getSkill()
     {
         return skill;
+    }
+    
+    public ItemStack getItem()
+    {
+        return item;
     }
     
     @Override

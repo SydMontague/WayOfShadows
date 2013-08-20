@@ -1,5 +1,6 @@
 package de.craftlancer.wayofshadows.skills;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -13,6 +14,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import de.craftlancer.wayofshadows.WayOfShadows;
+import de.craftlancer.wayofshadows.event.ShadowEffectSkillEvent;
 import de.craftlancer.wayofshadows.updater.ItemEffect;
 import de.craftlancer.wayofshadows.utils.Utils;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
@@ -87,6 +89,12 @@ public class EffectSkill extends Skill
                 p.sendMessage(getCooldownMsg(p));
                 return;
             }
+            
+            ShadowEffectSkillEvent event = new ShadowEffectSkillEvent(p, e.getEntity(), this);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            
+            if (event.isCancelled())
+                return;
             
             if (Math.random() <= chance.getValue(level))
                 ((LivingEntity) e.getEntity()).addPotionEffect(new PotionEffect(type, duration.getIntValue(level), strength.getIntValue(level)));

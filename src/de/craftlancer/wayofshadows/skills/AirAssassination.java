@@ -1,5 +1,6 @@
 package de.craftlancer.wayofshadows.skills;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -10,6 +11,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.craftlancer.wayofshadows.WayOfShadows;
+import de.craftlancer.wayofshadows.event.ShadowAirAssassinEvent;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
 public class AirAssassination extends Skill
@@ -58,16 +60,22 @@ public class AirAssassination extends Skill
         if (p.getFallDistance() < minHeight.getValue(level))
             return;
         
-        double height = ((p.getFallDistance() - minHeight.getValue(level)) < maxHeight.getValue(level) ? p.getFallDistance() - minHeight.getValue(level) : maxHeight.getValue(level));
-        
         if (isOnCooldown(p))
         {
             p.sendMessage(getCooldownMsg(p));
             return;
         }
         
+        double height = ((p.getFallDistance() - minHeight.getValue(level)) < maxHeight.getValue(level) ? p.getFallDistance() - minHeight.getValue(level) : maxHeight.getValue(level));
+        
         if (Math.random() <= chance.getValue(level))
         {
+            ShadowAirAssassinEvent event = new ShadowAirAssassinEvent(p, e.getEntity(), this, height);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            
+            if (event.isCancelled())
+                return;
+            
             e.setDamage(e.getDamage() + height * damagePerHeight.getValue(level));
             if (negateFallDamage)
                 p.setFallDistance(0);

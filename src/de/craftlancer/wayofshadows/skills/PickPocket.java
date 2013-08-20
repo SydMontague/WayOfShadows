@@ -1,5 +1,6 @@
 package de.craftlancer.wayofshadows.skills;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
@@ -14,6 +15,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 import de.craftlancer.wayofshadows.ValueCatalogue;
 import de.craftlancer.wayofshadows.WayOfShadows;
+import de.craftlancer.wayofshadows.event.ShadowPickPocketEvent;
 import de.craftlancer.wayofshadows.utils.PickPocketCheckTask;
 import de.craftlancer.wayofshadows.utils.Utils;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
@@ -42,7 +44,7 @@ public class PickPocket extends Skill
         onSneak = config.getBoolean(key + ".onSneak", true);
         abortOnDamage = config.getBoolean(key + ".abortOnDamage", true);
         valueCatalogue = plugin.getValueCatalogue(config.getString(key + ".valueCatalogue"));
-        
+                
         maxValueMsg = config.getString(key + ".maxValueMsg", "You've reached your stealing limit.");
     }
     
@@ -107,6 +109,12 @@ public class PickPocket extends Skill
         
         if (Math.random() < chance.getValue(level))
         {
+            ShadowPickPocketEvent event = new ShadowPickPocketEvent(p, (Player) p.getMetadata("stealingPlayer").get(0).value(), this, item);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            
+            if (event.isCancelled())
+                return;
+            
             e.getView().getTopInventory().removeItem(item);
             p.getInventory().addItem(item);
         }
