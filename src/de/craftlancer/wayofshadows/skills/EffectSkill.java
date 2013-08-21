@@ -19,6 +19,9 @@ import de.craftlancer.wayofshadows.updater.ItemEffect;
 import de.craftlancer.wayofshadows.utils.Utils;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
+/**
+ * Represents a configuration of the Effect skill
+ */
 public class EffectSkill extends Skill
 {
     private PotionEffectType type;
@@ -55,7 +58,7 @@ public class EffectSkill extends Skill
         onSneak = i.sneak;
     }
     
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e)
     {
         ItemStack item = null;
@@ -90,7 +93,7 @@ public class EffectSkill extends Skill
                 return;
             }
             
-            ShadowEffectSkillEvent event = new ShadowEffectSkillEvent(p, e.getEntity(), this);
+            ShadowEffectSkillEvent event = new ShadowEffectSkillEvent(p, this, e.getEntity());
             Bukkit.getServer().getPluginManager().callEvent(event);
             
             if (event.isCancelled())
@@ -115,6 +118,12 @@ public class EffectSkill extends Skill
         config.set(getName() + ".duration", duration.getInput());
         config.set(getName() + ".strength", strength.getInput());
         config.set(getName() + ".onSneak", onSneak);
+    }
+    
+    @Override
+    public String getType()
+    {
+        return "effect";
     }
     
 }

@@ -2,8 +2,6 @@ package de.craftlancer.wayofshadows.event;
 
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import de.craftlancer.wayofshadows.skills.GrapplingHook;
@@ -11,29 +9,15 @@ import de.craftlancer.wayofshadows.skills.GrapplingHook;
 /**
  * Called when a player tries to pull to his hook.
  */
-public class ShadowPullEvent extends Event implements Cancellable
+public class ShadowPullEvent extends ShadowEvent
 {
     private static final HandlerList handlers = new HandlerList();
-    private Player player;
     private Arrow arrow;
-    private GrapplingHook skill;
-    private boolean cancel = false;
     
-    public ShadowPullEvent(Player player, Arrow arrow, GrapplingHook skill)
+    public ShadowPullEvent(Player player, GrapplingHook skill, Arrow arrow)
     {
-        this.player = player;
+        super(player, skill);
         this.arrow = arrow;
-        this.skill = skill;
-    }
-    
-    /**
-     * Get the player who tries to pull himself
-     * 
-     * @return the player
-     */
-    public Player getPlayer()
-    {
-        return player;
     }
     
     /**
@@ -53,24 +37,13 @@ public class ShadowPullEvent extends Event implements Cancellable
      */
     public double getDistance()
     {
-        return player.getEyeLocation().distance(arrow.getLocation());
+        return getPlayer().getEyeLocation().distance(getArrow().getLocation());
     }
     
+    @Override
     public GrapplingHook getSkill()
     {
-        return skill;
-    }
-    
-    @Override
-    public boolean isCancelled()
-    {
-        return cancel;
-    }
-    
-    @Override
-    public void setCancelled(boolean arg0)
-    {
-        cancel = arg0;
+        return (GrapplingHook) super.getSkill();
     }
     
     @Override

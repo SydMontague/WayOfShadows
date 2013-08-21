@@ -14,6 +14,9 @@ import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.event.ShadowAirAssassinEvent;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
+/**
+ * Represents a configuration of the AirAssasionation skill
+ */
 public class AirAssassination extends Skill
 {
     private ValueWrapper chance;
@@ -70,7 +73,7 @@ public class AirAssassination extends Skill
         
         if (Math.random() <= chance.getValue(level))
         {
-            ShadowAirAssassinEvent event = new ShadowAirAssassinEvent(p, e.getEntity(), this, height);
+            ShadowAirAssassinEvent event = new ShadowAirAssassinEvent(p, this, e.getEntity(), height);
             Bukkit.getServer().getPluginManager().callEvent(event);
             
             if (event.isCancelled())
@@ -95,5 +98,11 @@ public class AirAssassination extends Skill
         config.set(getName() + ".maxHeight", maxHeight.getInput());
         config.set(getName() + ".damagePerHeight", damagePerHeight.getInput());
         config.set(getName() + ".negateFallDamage", negateFallDamage);
+    }
+    
+    @Override
+    public String getType()
+    {
+        return "airassassination";
     }
 }

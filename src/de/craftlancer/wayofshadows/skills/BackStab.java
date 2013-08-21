@@ -12,11 +12,14 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import de.craftlancer.wayofshadows.WayOfShadows;
-import de.craftlancer.wayofshadows.event.ShadowBackstabEvent;
+import de.craftlancer.wayofshadows.event.ShadowBackStabEvent;
 import de.craftlancer.wayofshadows.updater.BackstabItem;
 import de.craftlancer.wayofshadows.utils.Utils;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
+/**
+ * Represents a configuration of the BackStab skill
+ */
 public class BackStab extends Skill
 {
     private ValueWrapper chance;
@@ -68,7 +71,7 @@ public class BackStab extends Skill
         critMsg = msg3;
     }
     
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e)
     {
         ItemStack item = null;
@@ -103,7 +106,7 @@ public class BackStab extends Skill
                 return;
             }
             
-            ShadowBackstabEvent event = new ShadowBackstabEvent(p, e.getEntity(), this);
+            ShadowBackStabEvent event = new ShadowBackStabEvent(p, this, e.getEntity());
             Bukkit.getServer().getPluginManager().callEvent(event);
             
             if (event.isCancelled())
@@ -124,7 +127,6 @@ public class BackStab extends Skill
             
             setOnCooldown(p);
         }
-        
     }
     
     @Override
@@ -144,5 +146,11 @@ public class BackStab extends Skill
         config.set(getName() + ".attackerMsg", attackerMsg);
         config.set(getName() + ".victimMsg", victimMsg);
         config.set(getName() + ".critMsg", critMsg);
+    }
+    
+    @Override
+    public String getType()
+    {
+        return "backstab";
     }
 }

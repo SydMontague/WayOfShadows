@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -20,6 +21,9 @@ import de.craftlancer.wayofshadows.utils.PickPocketCheckTask;
 import de.craftlancer.wayofshadows.utils.Utils;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
+/**
+ * Represents a configuration of the PickPocket skill
+ */
 public class PickPocket extends Skill
 {
     private ValueWrapper maxAngle;
@@ -44,11 +48,11 @@ public class PickPocket extends Skill
         onSneak = config.getBoolean(key + ".onSneak", true);
         abortOnDamage = config.getBoolean(key + ".abortOnDamage", true);
         valueCatalogue = plugin.getValueCatalogue(config.getString(key + ".valueCatalogue"));
-                
+        
         maxValueMsg = config.getString(key + ".maxValueMsg", "You've reached your stealing limit.");
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEntityEvent e)
     {
         Player p = e.getPlayer();
@@ -79,7 +83,7 @@ public class PickPocket extends Skill
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onSteal(InventoryClickEvent e)
     {
         Player p = ((Player) e.getWhoClicked());
@@ -109,7 +113,7 @@ public class PickPocket extends Skill
         
         if (Math.random() < chance.getValue(level))
         {
-            ShadowPickPocketEvent event = new ShadowPickPocketEvent(p, (Player) p.getMetadata("stealingPlayer").get(0).value(), this, item);
+            ShadowPickPocketEvent event = new ShadowPickPocketEvent(p, this, (Player) p.getMetadata("stealingPlayer").get(0).value(), item);
             Bukkit.getServer().getPluginManager().callEvent(event);
             
             if (event.isCancelled())
@@ -122,7 +126,7 @@ public class PickPocket extends Skill
         p.setMetadata("stealingValue", new FixedMetadataValue(plugin, p.getMetadata("stealingValue").get(0).asDouble() + value));
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onClose(InventoryCloseEvent e)
     {
         if (!e.getPlayer().hasMetadata("stealingPlayer"))
@@ -134,7 +138,7 @@ public class PickPocket extends Skill
         setOnCooldown((Player) e.getPlayer());
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDamage(EntityDamageEvent e)
     {
         if (abortOnDamage && e.getEntity().hasMetadata("stealingPlayer") && e.getEntity().getType().equals(EntityType.PLAYER))
@@ -152,5 +156,11 @@ public class PickPocket extends Skill
         config.set(getName() + ".maxAngle", maxAngle.getInput());
         config.set(getName() + ".onSneak", onSneak);
         config.set(getName() + ".valueCatalogue", valueCatalogue);
+    }
+    
+    @Override
+    public String getType()
+    {
+        return "pickpocket";
     }
 }

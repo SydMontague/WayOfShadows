@@ -1,5 +1,8 @@
 package de.craftlancer.wayofshadows.utils;
 
+/**
+ * Used to wrap config values which can be doubles or mathstrings as well
+ */
 public class ValueWrapper
 {
     private String input;
@@ -17,6 +20,12 @@ public class ValueWrapper
         input = String.valueOf(d);
     }
     
+    /**
+     * Get the value of this object with the given level
+     * 
+     * @param level - the level for which the value is calculated for (x in the inputString)
+     * @return the double value of this wrapper
+     */
     public double getValue(int level)
     {
         if (value != null)
@@ -24,7 +33,14 @@ public class ValueWrapper
         else
             return Double.valueOf(getMathResult(input, level, input)).doubleValue();
     }
-    
+        
+    /**
+     * Get the value of the object with 2 parameters.
+     * 
+     * @param level - the level for which the value is calculated for (x in the inputString)
+     * @param int2 - the 2nd paramter for which is value is calculated for (y in the inputString)
+     * @return the double value of this wrapper
+     */
     public double getValue(int level, int int2)
     {
         if (value != null)
@@ -33,6 +49,12 @@ public class ValueWrapper
             return Double.valueOf(getMathResult(input, level, int2));
     }
     
+    /**
+     * Get the integer value of this object with the given level
+     * 
+     * @param level - the level for which the value is calculated for (x in the inputString)
+     * @return the integer value of this wrapper
+     */
     public int getIntValue(int level)
     {
         if (value != null)
@@ -41,6 +63,11 @@ public class ValueWrapper
             return Double.valueOf(getMathResult(input, level, input)).intValue();
     }
     
+    /**
+     * Get the input String which is used to determine the values
+     * 
+     * @return the input String
+     */
     public String getInput()
     {
         return input;

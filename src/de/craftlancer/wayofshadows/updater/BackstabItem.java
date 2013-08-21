@@ -1,5 +1,8 @@
 package de.craftlancer.wayofshadows.updater;
 
+/**
+ * Legacy class for updating 0.4 configs to 0.5 configs
+ */
 public class BackstabItem
 {
     public double multiplier = 1.0;

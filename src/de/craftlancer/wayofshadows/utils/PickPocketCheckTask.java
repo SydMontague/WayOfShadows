@@ -3,6 +3,9 @@ package de.craftlancer.wayofshadows.utils;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+/**
+ * Runs distance and angle checks for ongoing pickpockets
+ */
 public class PickPocketCheckTask extends BukkitRunnable
 {
     private Player p1;

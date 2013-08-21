@@ -2,6 +2,9 @@ package de.craftlancer.wayofshadows.updater;
 
 import org.bukkit.potion.PotionEffectType;
 
+/**
+ * Legacy class for updating 0.4 configs to 0.5 configs
+ */
 public class ItemEffect
 {
     public String key = "";

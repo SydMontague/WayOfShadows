@@ -25,6 +25,9 @@ import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.event.ShadowPullEvent;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
+/**
+ * Represents a configuration of the GrapplingHook skill
+ */
 public class GrapplingHook extends Skill
 {
     private ValueWrapper blockTime;
@@ -78,7 +81,7 @@ public class GrapplingHook extends Skill
         itemsPerBlock = new ValueWrapper(ipb);
     }
     
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onHookShoot(PlayerInteractEvent event)
     {
         if (!event.hasItem() || !(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
@@ -105,7 +108,7 @@ public class GrapplingHook extends Skill
         }
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPull(PlayerInteractEvent e)
     {
         if (!e.hasItem() || !isPullItem(e.getItem()) || !(e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
@@ -119,7 +122,7 @@ public class GrapplingHook extends Skill
         Arrow arrow = (Arrow) p.getMetadata(getName() + ".hookArrow").get(0).value();
         Location initLoc = (Location) arrow.getMetadata(getName() + ".playerLocation").get(0).value();
         
-        ShadowPullEvent event = new ShadowPullEvent(p, arrow, this);
+        ShadowPullEvent event = new ShadowPullEvent(p, this, arrow);
         Bukkit.getServer().getPluginManager().callEvent(event);
         
         if (event.isCancelled())
@@ -158,14 +161,14 @@ public class GrapplingHook extends Skill
         setOnCooldown(p);
     }
     
-    @EventHandler
-    public void onHookHit(ProjectileHitEvent event)
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onHookHit(ProjectileHitEvent e)
     {
-        if (!event.getEntity().getType().equals(EntityType.ARROW) || !event.getEntity().getShooter().getType().equals(EntityType.PLAYER))
+        if (!e.getEntity().getType().equals(EntityType.ARROW) || !e.getEntity().getShooter().getType().equals(EntityType.PLAYER))
             return;
         
-        Player p = (Player) event.getEntity().getShooter();
-        Arrow arrow = (Arrow) event.getEntity();
+        Player p = (Player) e.getEntity().getShooter();
+        Arrow arrow = (Arrow) e.getEntity();
         
         if (arrow.hasMetadata(getName() + ".playerLocation"))
         {
@@ -212,16 +215,16 @@ public class GrapplingHook extends Skill
         }
     }
     
-    @EventHandler
-    public void onDamage(EntityDamageByEntityEvent event)
+    @EventHandler(priority = EventPriority.LOW)
+    public void onDamage(EntityDamageByEntityEvent e)
     {
-        if (!event.getDamager().getType().equals(EntityType.ARROW))
+        if (!e.getDamager().getType().equals(EntityType.ARROW))
             return;
         
-        Arrow arrow = (Arrow) event.getDamager();
+        Arrow arrow = (Arrow) e.getDamager();
         
         if (arrow.hasMetadata(getName() + ".teleportArrow") || arrow.hasMetadata(getName() + ".playerLocation"))
-            event.setCancelled(true);
+            e.setCancelled(true);
     }
     
     private boolean isPullItem(ItemStack item)
@@ -259,5 +262,11 @@ public class GrapplingHook extends Skill
         config.set(getName() + ".maxDistance", maxDistance.getInput());
         config.set(getName() + ".distanceToInitial", distanceToInitial.getInput());
         config.set(getName() + ".itemsPerBlock", itemsPerBlock.getInput());
+    }
+    
+    @Override
+    public String getType()
+    {
+        return "grapplinghook";
     }
 }

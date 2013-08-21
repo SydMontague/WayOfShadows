@@ -16,6 +16,13 @@ public class ValueCatalogue
     private Map<String, Integer> loreValues = new HashMap<String, Integer>();
     private Map<String, Map<Integer, Integer>> enchantmentValues = new HashMap<String, Map<Integer, Integer>>();
     
+    /**
+     * Create a new ValueCatalogue
+     * 
+     * @param instance - the instance of the plugin, the catalogue is created for
+     * @param config - the config, where the catalogue is saved in
+     * @param catalogueName - the name of the catalogue, which is used in the config 
+     */
     public ValueCatalogue(WayOfShadows instance, FileConfiguration config, String catalogueName)
     {
         this.catalogueName = catalogueName;
@@ -28,7 +35,7 @@ public class ValueCatalogue
                 }
                 catch (NumberFormatException e)
                 {
-                    instance.log.severe("A itemkey in valueCatalogue \"" + catalogueName + "\" is not a integer!");
+                    instance.error("A itemkey in valueCatalogue \"" + catalogueName + "\" is not a integer!");
                     continue;
                 }
         
@@ -52,7 +59,7 @@ public class ValueCatalogue
                     }
                     catch (NumberFormatException e)
                     {
-                        instance.log.severe("A enchantmentLevel in valueCatalogue \"" + catalogueName + "\" is not a integer!");
+                        instance.error("A enchantmentLevel in valueCatalogue \"" + catalogueName + "\" is not a integer!");
                         continue;
                     }
                 
@@ -60,6 +67,12 @@ public class ValueCatalogue
             }
     }
     
+    /**
+     * Get the value of the item, according to this catalogue based on itemtype, name, lore and enchantments.
+     * 
+     * @param item - the item you want the value of
+     * @return the value of the item. If no property of the item matches with the catalogue it returns 0;
+     */
     public int getValue(ItemStack item)
     {
         int value = 0;
@@ -88,6 +101,11 @@ public class ValueCatalogue
         return value;
     }
     
+    /**
+     * Get the name of the catalogue
+     * 
+     * @return the name of the catalogue
+     */
     public String getCatalogueName()
     {
         return catalogueName;

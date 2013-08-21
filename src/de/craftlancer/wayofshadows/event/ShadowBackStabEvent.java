@@ -4,17 +4,17 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-import de.craftlancer.wayofshadows.skills.EffectSkill;
+import de.craftlancer.wayofshadows.skills.BackStab;
 
 /**
- * Called when a player puts an effect on another entity
+ * Called when a player performs a backstab
  */
-public class ShadowEffectSkillEvent extends ShadowEvent
+public class ShadowBackStabEvent extends ShadowEvent
 {
     private static final HandlerList handlers = new HandlerList();
     private Entity entity;
     
-    public ShadowEffectSkillEvent(Player player, EffectSkill skill, Entity entity)
+    public ShadowBackStabEvent(Player player, BackStab skill, Entity entity)
     {
         super(player, skill);
         this.entity = entity;
@@ -31,9 +31,9 @@ public class ShadowEffectSkillEvent extends ShadowEvent
     }
     
     @Override
-    public EffectSkill getSkill()
+    public BackStab getSkill()
     {
-        return (EffectSkill) super.getSkill();
+        return (BackStab) super.getSkill();
     }
     
     @Override

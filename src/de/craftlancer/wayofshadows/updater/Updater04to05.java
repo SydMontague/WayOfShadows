@@ -18,6 +18,9 @@ import de.craftlancer.wayofshadows.skills.EffectSkill;
 import de.craftlancer.wayofshadows.skills.GrapplingHook;
 import de.craftlancer.wayofshadows.skills.Skill;
 
+/**
+ * Updates a 0.4 config to a 0.5 config
+ */
 public class Updater04to05
 {
     private WayOfShadows plugin;

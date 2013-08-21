@@ -1,65 +1,51 @@
 package de.craftlancer.wayofshadows.event;
 
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
 import de.craftlancer.wayofshadows.skills.PickPocket;
 
-public class ShadowPickPocketEvent extends Event implements Cancellable
+/**
+ * Called when a player performs a pickpocket
+ */
+public class ShadowPickPocketEvent extends ShadowEvent
 {
     private static final HandlerList handlers = new HandlerList();
-    private Player player;
     private Player victim;
-    private PickPocket skill;
     private ItemStack item;
-    private boolean cancel = false;
     
-    public ShadowPickPocketEvent(Player player, Player victim, PickPocket skill, ItemStack item)
+    public ShadowPickPocketEvent(Player player, PickPocket skill, Player victim, ItemStack item)
     {
-        this.player = player;
+        super(player, skill);
         this.victim = victim;
-        this.skill = skill;
         this.item = item;
     }
     
     /**
-     * Get the player who tries to pull himself
+     * Get the player who gets robbed
      * 
-     * @return the player
+     * @return the robbed Player
      */
-    public Player getPlayer()
-    {
-        return player;
-    }
-    
     public Player getVictim()
     {
         return victim;
     }
     
-    public PickPocket getSkill()
-    {
-        return skill;
-    }
-    
+    /**
+     * Get the item which is supposed to be stolen
+     * 
+     * @return the ItemStack of the Item
+     */
     public ItemStack getItem()
     {
         return item;
     }
     
     @Override
-    public boolean isCancelled()
+    public PickPocket getSkill()
     {
-        return cancel;
-    }
-    
-    @Override
-    public void setCancelled(boolean arg0)
-    {
-        cancel = arg0;
+        return (PickPocket) super.getSkill();
     }
     
     @Override

@@ -2,61 +2,52 @@ package de.craftlancer.wayofshadows.event;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import de.craftlancer.wayofshadows.skills.AirAssassination;
 
-public class ShadowAirAssassinEvent extends Event implements Cancellable
+/**
+ * Called when a player performs a air assassionation
+ */
+public class ShadowAirAssassinEvent extends ShadowEvent
 {
     private static final HandlerList handlers = new HandlerList();
-    private boolean cancel = false;
-    private Player player;
     private Entity entity;
-    private AirAssassination skill;
     private double height;
     
-    public ShadowAirAssassinEvent(Player player, Entity entity, AirAssassination skill, double height)
+    public ShadowAirAssassinEvent(Player player, AirAssassination skill, Entity entity, double height)
     {
-        this.player = player;
+        super(player, skill);
         this.entity = entity;
-        this.skill = skill;
         this.height = height;
     }
     
-    public Player getPlayer()
-    {
-        return player;
-    }
-    
+    /**
+     * Get the entity, which is victim of the attack
+     * 
+     * @return the Entity, which is attacked
+     */
     public Entity getEntity()
     {
         return entity;
     }
     
-    public AirAssassination getSkill()
-    {
-        return skill;
-    }
-    
+    /**
+     * Returns the height, based on fallheight - minheight of the skill.
+     * 
+     * @return the height, which is accounted for this attack
+     */
     public double getHeight()
     {
         return height;
     }
     
     @Override
-    public boolean isCancelled()
+    public AirAssassination getSkill()
     {
-        return cancel;
+        return (AirAssassination) super.getSkill();
     }
-    
-    @Override
-    public void setCancelled(boolean cancel)
-    {
-        this.cancel = cancel;
-    }
-    
+
     @Override
     public HandlerList getHandlers()
     {

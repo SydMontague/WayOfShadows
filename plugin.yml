@@ -3,13 +3,17 @@ main: de.craftlancer.wayofshadows.WayOfShadows
 dev-url: http://dev.bukkit.org/server-mods/WayOfShadows
 version: 0.5_dev
 description: Poison, backstab and hook!
+softdepend: [SkillLevels]
 permissions:
-  shadow.backstab:
-    description: Backstab your enemies!
+  shadow.<skillname>:    
+    description: Allows you to use the skill with all valid items
     default: false
-  shadow.poison:
-    description: Poison your enemies!
+  shadow.<skillname>.item.<id>:    
+    description: Allows you to use the skill with items with id <id>.
     default: false
-  shadow.hook:
-    description: Hook yourself over walls
+  shadow.<skillname>.name.<name>:    
+    description: Allows you to use the skill with items with name <name>.
+    default: false
+  shadow.<skillname>.lore.<lore>:    
+    description: Allows you to use the skill with items which lore contains the String <lore>.
     default: false

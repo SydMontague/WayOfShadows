@@ -20,15 +20,12 @@ import de.craftlancer.wayofshadows.skills.Skill;
 import de.craftlancer.wayofshadows.updater.Updater04to05;
 import de.craftlancer.wayofshadows.utils.SkillFactory;
 
-//TODO call SkillLevels on Skill execution (for XP rewards)
-//TODO check EventHandlers for their priorities
-//TODO add javaDocs
 //TODO pickpocket for chests - low prio
 //TODO update internal config.yml
 //TOTEST everything! (especially ValueCatalogue)
 public class WayOfShadows extends JavaPlugin
 {
-    public Logger log;
+    private Logger log;
     private FileConfiguration config;
     private FileConfiguration valueConfig;
     
@@ -41,19 +38,22 @@ public class WayOfShadows extends JavaPlugin
     {
         log = getLogger();
         PluginManager pm = getServer().getPluginManager();
+        if (pm.getPlugin("SkillLevels") != null && pm.getPlugin("SkillLevels").isEnabled())
+        {
+            slevel = SkillLevels.getInstance();
+            pm.registerEvents(new SkillLevelsManager(slevel), this);
+        }
         
-        if (pm.getPlugin("SkillLevels") != null)
-            slevel = (SkillLevels) pm.getPlugin("SkillLevels");
+        pm.registerEvents(new ShadowListener(this), this);
         
         if (!new File(getDataFolder().getPath() + File.separatorChar + "config.yml").exists())
             saveDefaultConfig();
         
         valueConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "values.yml"));
+        config = getConfig();
         
         for (String key : valueConfig.getKeys(false))
             valCatalogue.put(key, new ValueCatalogue(this, valueConfig, key));
-        
-        config = getConfig();
         
         if (!config.isSet("configVersion"))
             new Updater04to05(this).update();
@@ -87,18 +87,48 @@ public class WayOfShadows extends JavaPlugin
         getServer().getScheduler().cancelTasks(this);
     }
     
+    /**
+     * Get the instance of the SkillLevels plugin.
+     * 
+     * @return the instance of SkillLevels
+     */
     public SkillLevels getSkillLevels()
     {
         return slevel;
     }
     
+    /**
+     * Get the ValueCatalogue, which is mapped to the string
+     * 
+     * @param string - the name of the requested catalogue
+     * @return the catalogue which is mappes to string
+     */
     public ValueCatalogue getValueCatalogue(String string)
     {
         return valCatalogue.get(string);
     }
     
+    /**
+     * Get the level of a player in a certain level system
+     * 
+     * @param p - the player the level is calculated of
+     * @param levelSystem - the name of the system
+     * @return the level of the player in the given system or 0 if the plugin is
+     *         not loaded,
+     *         or the player is not registered in this system
+     */
     public int getLevel(Player p, String levelSystem)
     {
         return getSkillLevels() != null ? getSkillLevels().getUserLevel(levelSystem, p.getName()) : 0;
+    }
+    
+    /**
+     * Just a wrapper for log.severe();
+     * 
+     * @param s - the message, which should be given out
+     */
+    public void error(String s)
+    {
+        log.severe(s);
     }
 }
