@@ -102,6 +102,11 @@ public class PickPocket extends Skill
         if (item.getType().equals(Material.AIR))
             return;
         
+        if (!valueCatalogue.canSteal(item))
+        {
+            return;
+        }
+        
         int level = plugin.getLevel(p, getLevelSys());
         int value = valueCatalogue.getValue(item);
         

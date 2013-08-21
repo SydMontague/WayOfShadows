@@ -189,7 +189,7 @@ public class GrapplingHook extends Skill
                 return;
             }
             
-            p.teleport(loc);
+            p.teleport(loc.add(0, 0.75, 0));
             
             int level = plugin.getLevel(p, getLevelSys());
             final Block block = p.getLocation().getBlock().getRelative(0, -1, 0);

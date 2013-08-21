@@ -100,7 +100,7 @@ public class EffectSkill extends Skill
                 return;
             
             if (Math.random() <= chance.getValue(level))
-                ((LivingEntity) e.getEntity()).addPotionEffect(new PotionEffect(type, duration.getIntValue(level), strength.getIntValue(level)));
+                ((LivingEntity) e.getEntity()).addPotionEffect(new PotionEffect(type, duration.getIntValue(level) * 20, strength.getIntValue(level)));
             
             setOnCooldown(p);
         }

@@ -19,9 +19,11 @@ public class ValueCatalogue
     /**
      * Create a new ValueCatalogue
      * 
-     * @param instance - the instance of the plugin, the catalogue is created for
+     * @param instance - the instance of the plugin, the catalogue is created
+     *            for
      * @param config - the config, where the catalogue is saved in
-     * @param catalogueName - the name of the catalogue, which is used in the config 
+     * @param catalogueName - the name of the catalogue, which is used in the
+     *            config
      */
     public ValueCatalogue(WayOfShadows instance, FileConfiguration config, String catalogueName)
     {
@@ -68,10 +70,12 @@ public class ValueCatalogue
     }
     
     /**
-     * Get the value of the item, according to this catalogue based on itemtype, name, lore and enchantments.
+     * Get the value of the item, according to this catalogue based on itemtype,
+     * name, lore and enchantments.
      * 
      * @param item - the item you want the value of
-     * @return the value of the item. If no property of the item matches with the catalogue it returns 0;
+     * @return the value of the item. If no property of the item matches with
+     *         the catalogue it returns 0;
      */
     public int getValue(ItemStack item)
     {
@@ -109,5 +113,30 @@ public class ValueCatalogue
     public String getCatalogueName()
     {
         return catalogueName;
+    }
+    
+    public boolean canSteal(ItemStack item)
+    {
+        if (itemValues.containsKey(item.getTypeId()))
+            return true;
+        
+        if (item.hasItemMeta())
+        {
+            if (item.getItemMeta().hasDisplayName() && nameValues.containsKey(item.getItemMeta().getDisplayName()))
+                return true;
+            
+            if (item.getItemMeta().hasLore())
+                for (String s : loreValues.keySet())
+                    for (String str : item.getItemMeta().getLore())
+                        if (str.contains(s))
+                            return true;
+            
+            if (item.getItemMeta().hasEnchants())
+                for (Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet())
+                    if (enchantmentValues.containsKey(entry.getKey().getName()))
+                        if (enchantmentValues.get(entry.getKey().getName()).containsKey(entry.getValue()))
+                            return true;
+        }
+        return false;
     }
 }

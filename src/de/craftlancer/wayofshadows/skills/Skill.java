@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
@@ -40,13 +41,13 @@ public abstract class Skill implements Listener
         cooldownMsg = instance.getConfig().getString(key + ".cooldownMsg", "This skill for %time% seconds on cooldown!");
         
         for(String l : lore)
-            instance.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".lore." + l));
+            instance.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".lore." + l, PermissionDefault.FALSE));
         
         for(String l : itemNames)
-            instance.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".names." + l));
+            instance.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".names." + l, PermissionDefault.FALSE));
 
         for(Integer l : items)
-            instance.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".item." + l));
+            instance.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".item." + l, PermissionDefault.FALSE));
     }
     
     public Skill(WayOfShadows instance, String key, String item)

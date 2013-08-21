@@ -56,6 +56,6 @@ public class SkillLevelsManager implements Listener
     private void handleShadowEvent(ShadowEvent e)
     {
         Skill s = e.getSkill();
-        levels.handleAction(LevelAction.CUSTOM, "shadow_" + s.getType() + "_" + s.getName(), e.getPlayer());
+        levels.handleAction(LevelAction.CUSTOM, "shadow_" + s.getName(), e.getPlayer());
     }
 }

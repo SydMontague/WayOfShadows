@@ -11,7 +11,14 @@ public class ValueWrapper
     public ValueWrapper(String string)
     {
         input = string;
-        value = Double.valueOf(string);
+        try
+        {
+            value = Double.valueOf(string);
+        }
+        catch (NumberFormatException e)
+        {
+            value = null;
+        }
     }
     
     public ValueWrapper(double d)
@@ -23,7 +30,8 @@ public class ValueWrapper
     /**
      * Get the value of this object with the given level
      * 
-     * @param level - the level for which the value is calculated for (x in the inputString)
+     * @param level - the level for which the value is calculated for (x in the
+     *            inputString)
      * @return the double value of this wrapper
      */
     public double getValue(int level)
@@ -33,12 +41,14 @@ public class ValueWrapper
         else
             return Double.valueOf(getMathResult(input, level, input)).doubleValue();
     }
-        
+    
     /**
      * Get the value of the object with 2 parameters.
      * 
-     * @param level - the level for which the value is calculated for (x in the inputString)
-     * @param int2 - the 2nd paramter for which is value is calculated for (y in the inputString)
+     * @param level - the level for which the value is calculated for (x in the
+     *            inputString)
+     * @param int2 - the 2nd paramter for which is value is calculated for (y in
+     *            the inputString)
      * @return the double value of this wrapper
      */
     public double getValue(int level, int int2)
@@ -52,7 +62,8 @@ public class ValueWrapper
     /**
      * Get the integer value of this object with the given level
      * 
-     * @param level - the level for which the value is calculated for (x in the inputString)
+     * @param level - the level for which the value is calculated for (x in the
+     *            inputString)
      * @return the integer value of this wrapper
      */
     public int getIntValue(int level)
