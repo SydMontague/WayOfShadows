@@ -1,10 +1,14 @@
 package de.craftlancer.wayofshadows.utils;
 
+import java.util.HashMap;
+
 /**
  * Used to wrap config values which can be doubles or mathstrings as well
  */
 public class ValueWrapper
 {
+    private HashMap<Integer, Double> cache;
+    
     private String input;
     private Double value;
     
@@ -18,6 +22,7 @@ public class ValueWrapper
         catch (NumberFormatException e)
         {
             value = null;
+            cache = new HashMap<Integer, Double>();
         }
     }
     
@@ -38,6 +43,8 @@ public class ValueWrapper
     {
         if (value != null)
             return value;
+        else if (cache.containsKey(level))
+            return cache.get(level);
         else
             return Double.valueOf(getMathResult(input, level, input)).doubleValue();
     }
@@ -70,6 +77,8 @@ public class ValueWrapper
     {
         if (value != null)
             return value.intValue();
+        else if (cache.containsKey(level))
+            return cache.get(level).intValue();
         else
             return Double.valueOf(getMathResult(input, level, input)).intValue();
     }

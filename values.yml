@@ -1,0 +1,14 @@
+default:
+    items:
+        1: 5
+    names:
+        MySword: 10
+    lore:
+        adminTool: 1000
+    enchantments:
+        DAMAGE_ALL:
+          1: 10
+          2: 30
+          3: 60
+          4: 100
+          5: 150

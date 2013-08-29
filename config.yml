@@ -1,33 +1,75 @@
+configVersion: 1
 backstab:
-    items:
-        359:
-            chance: 1.0
-            critchance: 0.5
-            critmultiplier: 3
-            multiplier: 2
-            onsneak: true
-            critonsneak: true
-            maxangle: 90.0
-    attackermsg: "Backstab!"
-    victimmsg: "You got stabbed in the back!"
-    critmsg: "CRITICAL!"
+  type: backstab
+  lore: []
+  items: 
+    - 267
+    - 272
+    - 276
+    - 283
+    - 268
+    - 359
+    - 261
+  names: 
+    - BackStabItem
+  chance: 1
+  critChance: 0.5
+  multiplier: 2.0
+  critMultiplier: 3.0
+  maxAngle: 90.0
+  onSneak: true
+  critOnSneak: true
+  attackerMsg: Backstab!
+  victimMsg: You got stabbed in the back!
+  critMsg: CRITICAL!
 poison:
-    items:
-        294:
-            poison:
-                type: POISON
-                chance: 1.0
-                duration: 5
-                strength: 0
-                onsneak: true
-                maxangle: 90
+  type: effect
+  lore: []
+  items:
+  - 294
+  itemNames: []
+  effectType: POISON
+  chance: 1
+  maxAngle: 90.0
+  duration: 5
+  strength: 0
+  onSneak: true
 hook:
-    pullitem: 287
-    hookitem: 262
-    blocktime: 5
-    maxdistance: 100
-    distancetoinitial: 10
-    itemsperblock: 0.01
-    errormsg: "You can't hook there!"
-    initialmsg: "You are to far away from your initial location!"
-    distancemsg: "Your hook is to far away!"
+  lore: []
+  items:
+  - 262
+  itemNames: []
+  type: grapplinghook
+  pullLore: []
+  pullItems:
+  - 287
+  pullItemNames: []
+  distanceMsg: Your hook is to far away!
+  initialMsg: You are to far away from your initial location!
+  errorMsg: You can't hook there!
+  blockTime: 100.0
+  maxDistance: 100.0
+  distanceToInitial: 10.0
+  itemsPerBlock: 0.01
+pickpocket:
+  type: pickpocket
+  cooldown: 120
+  cooldownMsg: Pickpocket is for %time% seconds on cooldown!
+  levelSystem: schurke
+  maxAngle: 90
+  chance: 1
+  maxValue: 100
+  maxDistance: 8
+  onSneak: true
+  aboutOnDamage: true
+  valueCatalogue: default
+  maxValueMsg: You already stole enough!
+  cantStealMsg: You can't steal that!
+airassassin:
+  type: airassassination
+  chance: 1
+  minHeight: 5
+  maxHeight: 4
+  damagePerHeight: 24
+  negateFallOnSuccess : true
+  

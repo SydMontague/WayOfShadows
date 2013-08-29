@@ -206,7 +206,7 @@ public class GrapplingHook extends Skill
                     {
                         block.setType(type);
                     }
-                }.runTaskLater(plugin, blockTime.getIntValue(level));
+                }.runTaskLater(plugin, blockTime.getIntValue(level) > 0 ? blockTime.getIntValue(level) : 0);
             }
             
             p.setFallDistance(0);

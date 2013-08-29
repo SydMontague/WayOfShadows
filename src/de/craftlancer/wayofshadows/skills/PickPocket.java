@@ -35,6 +35,7 @@ public class PickPocket extends Skill
     private boolean abortOnDamage;
     
     private String maxValueMsg;
+    private String cantStealMsg;
     
     public PickPocket(WayOfShadows plugin, String key)
     {
@@ -50,6 +51,7 @@ public class PickPocket extends Skill
         valueCatalogue = plugin.getValueCatalogue(config.getString(key + ".valueCatalogue"));
         
         maxValueMsg = config.getString(key + ".maxValueMsg", "You've reached your stealing limit.");
+        cantStealMsg = config.getString(key + ".cantStealMsg", "You can't steal this Item.");
     }
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -104,6 +106,7 @@ public class PickPocket extends Skill
         
         if (!valueCatalogue.canSteal(item))
         {
+            p.sendMessage(cantStealMsg);
             return;
         }
         

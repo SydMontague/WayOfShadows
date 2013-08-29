@@ -1,7 +1,7 @@
 name: WayOfShadows
 main: de.craftlancer.wayofshadows.WayOfShadows
 dev-url: http://dev.bukkit.org/server-mods/WayOfShadows
-version: 0.5_dev
+version: 0.5
 description: Effect, BackStab, GrapplingHook, AirAssassionation and PickPocket skills
 softdepend: [SkillLevels]
 permissions:

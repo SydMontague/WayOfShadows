@@ -40,13 +40,13 @@ public abstract class Skill implements Listener
         cooldown = new ValueWrapper(instance.getConfig().getString(key + ".cooldown", "0"));
         cooldownMsg = instance.getConfig().getString(key + ".cooldownMsg", "This skill for %time% seconds on cooldown!");
         
-        for(String l : lore)
+        for (String l : lore)
             instance.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".lore." + l, PermissionDefault.FALSE));
         
-        for(String l : itemNames)
+        for (String l : itemNames)
             instance.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".names." + l, PermissionDefault.FALSE));
-
-        for(Integer l : items)
+        
+        for (Integer l : items)
             instance.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".item." + l, PermissionDefault.FALSE));
     }
     
@@ -117,7 +117,8 @@ public abstract class Skill implements Listener
      * It uses cooldownMsg as basis.
      * 
      * @param p - the player the message is made for
-     * @return a String, which replaced every %time% with the remaining cooldown time
+     * @return a String, which replaced every %time% with the remaining cooldown
+     *         time
      */
     public String getCooldownMsg(Player p)
     {
@@ -136,7 +137,8 @@ public abstract class Skill implements Listener
     }
     
     /**
-     * Set a specific player on cooldown, based on the cooldown value of this skill.
+     * Set a specific player on cooldown, based on the cooldown value of this
+     * skill.
      * 
      * @param p - the Player, which is set on cooldown
      */
@@ -159,7 +161,8 @@ public abstract class Skill implements Listener
     }
     
     /**
-     * Check if a player has the permission to perform this skill with the given Item
+     * Check if a player has the permission to perform this skill with the given
+     * Item
      * 
      * @param p - the Player which tries to perform the skill
      * @param item - the item as ItemStack
@@ -188,7 +191,8 @@ public abstract class Skill implements Listener
     }
     
     /**
-     * Check if the given item is able to perform this skill, based on the given itemIds, names and lore for this skill.
+     * Check if the given item is able to perform this skill, based on the given
+     * itemIds, names and lore for this skill.
      * 
      * @param item - the item as ItemStack
      * @return a boolean value whether it's a skillitem or not

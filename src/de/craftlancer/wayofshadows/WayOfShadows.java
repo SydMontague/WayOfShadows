@@ -21,8 +21,7 @@ import de.craftlancer.wayofshadows.updater.Updater04to05;
 import de.craftlancer.wayofshadows.utils.SkillFactory;
 
 //TODO pickpocket for chests - low prio
-//TODO update internal config.yml
-//TOTEST everything! (especially ValueCatalogue)
+//TODO reload command
 public class WayOfShadows extends JavaPlugin
 {
     private Logger log;
@@ -40,14 +39,17 @@ public class WayOfShadows extends JavaPlugin
         PluginManager pm = getServer().getPluginManager();
         if (pm.getPlugin("SkillLevels") != null && pm.getPlugin("SkillLevels").isEnabled())
         {
-            slevel = SkillLevels.getInstance();
+            slevel = (SkillLevels) pm.getPlugin("SkillLevels");
             pm.registerEvents(new SkillLevelsManager(slevel), this);
         }
         
         pm.registerEvents(new ShadowListener(this), this);
         
-        if (!new File(getDataFolder().getPath() + File.separatorChar + "config.yml").exists())
+        if (!new File(getDataFolder(), "config.yml").exists())
             saveDefaultConfig();
+        
+        if (!new File(getDataFolder(), "values.yml").exists())
+            saveResource("values.yml", false);
         
         valueConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "values.yml"));
         config = getConfig();

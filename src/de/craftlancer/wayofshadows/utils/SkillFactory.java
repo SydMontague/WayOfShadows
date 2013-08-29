@@ -11,9 +11,10 @@ import de.craftlancer.wayofshadows.skills.Skill;
 public class SkillFactory
 {
     /**
-     * Creates a new Skill instance based of the "type" value given in the config
+     * Creates a new Skill instance based of the "type" value given in the
+     * config
      * 
-     * @param key - the key of the skill in config 
+     * @param key - the key of the skill in config
      * @param plugin - the instance of the plugin, this skill is created for
      * @return a Skill object
      */

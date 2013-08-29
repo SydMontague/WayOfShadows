@@ -47,7 +47,7 @@ public class ShadowAirAssassinEvent extends ShadowEvent
     {
         return (AirAssassination) super.getSkill();
     }
-
+    
     @Override
     public HandlerList getHandlers()
     {

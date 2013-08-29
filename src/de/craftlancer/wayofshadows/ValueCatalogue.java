@@ -57,7 +57,7 @@ public class ValueCatalogue
                 for (String level : config.getConfigurationSection(catalogueName + ".enchantments." + key).getKeys(false))
                     try
                     {
-                        helpmap.put(Integer.parseInt(key), config.getInt(catalogueName + ".enchantments." + key + "." + level));
+                        helpmap.put(Integer.parseInt(level), config.getInt(catalogueName + ".enchantments." + key + "." + level));
                     }
                     catch (NumberFormatException e)
                     {
