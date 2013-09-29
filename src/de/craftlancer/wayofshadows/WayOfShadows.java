@@ -26,7 +26,6 @@ import de.craftlancer.wayofshadows.updater.Updater04to05;
 import de.craftlancer.wayofshadows.utils.SkillFactory;
 
 //TODO pickpocket for chests - low prio
-//TOTEST reload command, hook cooldownfix, NPE with dispenser, arrow pickup fix
 public class WayOfShadows extends JavaPlugin
 {
     private Logger log;
