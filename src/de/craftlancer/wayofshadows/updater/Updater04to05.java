@@ -71,6 +71,7 @@ public class Updater04to05
         }
     }
     
+    @SuppressWarnings("deprecation")
     private Map<String, List<ItemEffect>> loadPoisonItems()
     {
         Map<String, List<ItemEffect>> tmp = new HashMap<String, List<ItemEffect>>();

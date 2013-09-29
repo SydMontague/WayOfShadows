@@ -8,9 +8,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,7 +26,7 @@ import de.craftlancer.wayofshadows.updater.Updater04to05;
 import de.craftlancer.wayofshadows.utils.SkillFactory;
 
 //TODO pickpocket for chests - low prio
-//TODO reload command
+//TOTEST reload command, hook cooldownfix, NPE with dispenser, arrow pickup fix
 public class WayOfShadows extends JavaPlugin
 {
     private Logger log;
@@ -44,6 +49,38 @@ public class WayOfShadows extends JavaPlugin
         }
         
         pm.registerEvents(new ShadowListener(this), this);
+        
+        loadSkills();
+        
+        try
+        {
+            Metrics metrics = new Metrics(this);
+            metrics.start();
+        }
+        catch (IOException e)
+        {
+        }
+    }
+    
+    @Override
+    public void onDisable()
+    {
+        config = null;
+        getServer().getScheduler().cancelTasks(this);
+    }
+    
+    public void loadSkills()
+    {
+        for (Skill s : skills)
+        {
+            s.unregisterPermissions();
+            HandlerList.unregisterAll(s);
+        }
+        
+        skills.clear();
+        valCatalogue.clear();
+        
+        reloadConfig();
         
         if (!new File(getDataFolder(), "config.yml").exists())
             saveDefaultConfig();
@@ -69,24 +106,21 @@ public class WayOfShadows extends JavaPlugin
             if (s == null)
                 continue;
             skills.add(s);
-            pm.registerEvents(s, this);
+            Bukkit.getPluginManager().registerEvents(s, this);
         }
         
-        try
-        {
-            Metrics metrics = new Metrics(this);
-            metrics.start();
-        }
-        catch (IOException e)
-        {
-        }
     }
     
     @Override
-    public void onDisable()
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        config = null;
-        getServer().getScheduler().cancelTasks(this);
+        if (!(sender instanceof Player) || sender.hasPermission("shadow.reload"))
+        {
+            loadSkills();
+            sender.sendMessage(ChatColor.AQUA + "[WayOfShadows] successfully reloaded!");
+        }
+        
+        return true;
     }
     
     /**
@@ -102,7 +136,8 @@ public class WayOfShadows extends JavaPlugin
     /**
      * Get the ValueCatalogue, which is mapped to the string
      * 
-     * @param string - the name of the requested catalogue
+     * @param string
+     *            - the name of the requested catalogue
      * @return the catalogue which is mappes to string
      */
     public ValueCatalogue getValueCatalogue(String string)
@@ -113,8 +148,10 @@ public class WayOfShadows extends JavaPlugin
     /**
      * Get the level of a player in a certain level system
      * 
-     * @param p - the player the level is calculated of
-     * @param levelSystem - the name of the system
+     * @param p
+     *            - the player the level is calculated of
+     * @param levelSystem
+     *            - the name of the system
      * @return the level of the player in the given system or 0 if the plugin is
      *         not loaded,
      *         or the player is not registered in this system
@@ -127,7 +164,8 @@ public class WayOfShadows extends JavaPlugin
     /**
      * Just a wrapper for log.severe();
      * 
-     * @param s - the message, which should be given out
+     * @param s
+     *            - the message, which should be given out
      */
     public void error(String s)
     {

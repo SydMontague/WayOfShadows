@@ -40,14 +40,31 @@ public abstract class Skill implements Listener
         cooldown = new ValueWrapper(instance.getConfig().getString(key + ".cooldown", "0"));
         cooldownMsg = instance.getConfig().getString(key + ".cooldownMsg", "This skill for %time% seconds on cooldown!");
         
+        registerPermissions();
+    }
+    
+    protected void registerPermissions()
+    {
         for (String l : lore)
-            instance.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".lore." + l, PermissionDefault.FALSE));
+            plugin.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".lore." + l, PermissionDefault.FALSE));
         
         for (String l : itemNames)
-            instance.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".names." + l, PermissionDefault.FALSE));
+            plugin.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".names." + l, PermissionDefault.FALSE));
         
         for (Integer l : items)
-            instance.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".item." + l, PermissionDefault.FALSE));
+            plugin.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".item." + l, PermissionDefault.FALSE));
+    }
+    
+    public void unregisterPermissions()
+    {
+        for (String l : lore)
+            plugin.getServer().getPluginManager().removePermission("shadow." + getName() + ".lore." + l);
+        
+        for (String l : itemNames)
+            plugin.getServer().getPluginManager().removePermission("shadow." + getName() + ".names." + l);
+        
+        for (Integer l : items)
+            plugin.getServer().getPluginManager().removePermission("shadow." + getName() + ".item." + l);
     }
     
     public Skill(WayOfShadows instance, String key, String item)
@@ -116,7 +133,8 @@ public abstract class Skill implements Listener
      * Get the cooldown message for this skill and the specified player.
      * It uses cooldownMsg as basis.
      * 
-     * @param p - the player the message is made for
+     * @param p
+     *            - the player the message is made for
      * @return a String, which replaced every %time% with the remaining cooldown
      *         time
      */
@@ -128,7 +146,8 @@ public abstract class Skill implements Listener
     /**
      * Checks if a player has a cooldown for this skill.
      * 
-     * @param p - the checked Player
+     * @param p
+     *            - the checked Player
      * @return the boolean value if the player is on cooldown
      */
     public boolean isOnCooldown(Player p)
@@ -140,7 +159,8 @@ public abstract class Skill implements Listener
      * Set a specific player on cooldown, based on the cooldown value of this
      * skill.
      * 
-     * @param p - the Player, which is set on cooldown
+     * @param p
+     *            - the Player, which is set on cooldown
      */
     public void setOnCooldown(Player p)
     {
@@ -152,7 +172,8 @@ public abstract class Skill implements Listener
     /**
      * Get the remaining cooldown time of a player in seconds
      * 
-     * @param p - the Player
+     * @param p
+     *            - the Player
      * @return the remaining cooldown in seconds
      */
     public double getRemainingCooldown(Player p)
@@ -164,8 +185,10 @@ public abstract class Skill implements Listener
      * Check if a player has the permission to perform this skill with the given
      * Item
      * 
-     * @param p - the Player which tries to perform the skill
-     * @param item - the item as ItemStack
+     * @param p
+     *            - the Player which tries to perform the skill
+     * @param item
+     *            - the item as ItemStack
      * @return a boolean value whether he has the permission or not
      */
     public boolean hasPermission(Player p, ItemStack item)
@@ -173,7 +196,7 @@ public abstract class Skill implements Listener
         if (p.hasPermission("shadow." + getName()))
             return true;
         
-        if (p.hasPermission("shadow." + getName() + ".item." + item.getTypeId()))
+        if (p.hasPermission("shadow." + getName() + ".item." + item.getType().getId()))
             return true;
         
         if (item.hasItemMeta())
@@ -194,7 +217,8 @@ public abstract class Skill implements Listener
      * Check if the given item is able to perform this skill, based on the given
      * itemIds, names and lore for this skill.
      * 
-     * @param item - the item as ItemStack
+     * @param item
+     *            - the item as ItemStack
      * @return a boolean value whether it's a skillitem or not
      */
     public boolean isSkillItem(ItemStack item)
@@ -202,7 +226,7 @@ public abstract class Skill implements Listener
         if (getItemIds().isEmpty() && getItemNames().isEmpty() && getLore().isEmpty())
             return true;
         
-        if (getItemIds().contains(item.getTypeId()))
+        if (getItemIds().contains(item.getType().getId()))
             return true;
         
         if (item.hasItemMeta())
@@ -220,7 +244,8 @@ public abstract class Skill implements Listener
     /**
      * Save the skill to the given config file
      * 
-     * @param config - the config where the skill is saved to
+     * @param config
+     *            - the config where the skill is saved to
      */
     public void save(FileConfiguration config)
     {

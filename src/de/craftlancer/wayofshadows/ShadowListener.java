@@ -1,6 +1,5 @@
 package de.craftlancer.wayofshadows;
 
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,7 +19,7 @@ public class ShadowListener implements Listener
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onProjectileLaunch(ProjectileLaunchEvent e)
     {
-        if (!e.getEntity().getShooter().getType().equals(EntityType.PLAYER))
+        if (!(e.getEntity().getShooter() instanceof Player))
             return;
         
         e.getEntity().setMetadata("shootingItem", new FixedMetadataValue(plugin, ((Player) e.getEntity().getShooter()).getItemInHand().clone()));

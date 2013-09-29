@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 public class ValueCatalogue
 {
     private String catalogueName;
+    private int defaultValue;
     private Map<Integer, Integer> itemValues = new HashMap<Integer, Integer>();
     private Map<String, Integer> nameValues = new HashMap<String, Integer>();
     private Map<String, Integer> loreValues = new HashMap<String, Integer>();
@@ -19,15 +20,19 @@ public class ValueCatalogue
     /**
      * Create a new ValueCatalogue
      * 
-     * @param instance - the instance of the plugin, the catalogue is created
+     * @param instance
+     *            - the instance of the plugin, the catalogue is created
      *            for
-     * @param config - the config, where the catalogue is saved in
-     * @param catalogueName - the name of the catalogue, which is used in the
+     * @param config
+     *            - the config, where the catalogue is saved in
+     * @param catalogueName
+     *            - the name of the catalogue, which is used in the
      *            config
      */
     public ValueCatalogue(WayOfShadows instance, FileConfiguration config, String catalogueName)
     {
         this.catalogueName = catalogueName;
+        defaultValue = config.getInt(catalogueName + ".defaultValue", -1);
         
         if (config.isConfigurationSection(catalogueName + ".items"))
             for (String key : config.getConfigurationSection(catalogueName + ".items").getKeys(false))
@@ -73,7 +78,8 @@ public class ValueCatalogue
      * Get the value of the item, according to this catalogue based on itemtype,
      * name, lore and enchantments.
      * 
-     * @param item - the item you want the value of
+     * @param item
+     *            - the item you want the value of
      * @return the value of the item. If no property of the item matches with
      *         the catalogue it returns 0;
      */
@@ -81,8 +87,8 @@ public class ValueCatalogue
     {
         int value = 0;
         
-        if (itemValues.containsKey(item.getTypeId()))
-            value += itemValues.get(item.getTypeId());
+        if (itemValues.containsKey(item.getType().getId()))
+            value += itemValues.get(item.getType().getId());
         
         if (item.hasItemMeta())
         {
@@ -102,7 +108,12 @@ public class ValueCatalogue
                             value += enchantmentValues.get(entry.getKey().getName()).get(entry.getValue());
         }
         
-        return value;
+        return value == 0 ? getDefaultValue() : value;
+    }
+    
+    public int getDefaultValue()
+    {
+        return defaultValue;
     }
     
     /**
@@ -117,26 +128,6 @@ public class ValueCatalogue
     
     public boolean canSteal(ItemStack item)
     {
-        if (itemValues.containsKey(item.getTypeId()))
-            return true;
-        
-        if (item.hasItemMeta())
-        {
-            if (item.getItemMeta().hasDisplayName() && nameValues.containsKey(item.getItemMeta().getDisplayName()))
-                return true;
-            
-            if (item.getItemMeta().hasLore())
-                for (String s : loreValues.keySet())
-                    for (String str : item.getItemMeta().getLore())
-                        if (str.contains(s))
-                            return true;
-            
-            if (item.getItemMeta().hasEnchants())
-                for (Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet())
-                    if (enchantmentValues.containsKey(entry.getKey().getName()))
-                        if (enchantmentValues.get(entry.getKey().getName()).containsKey(entry.getValue()))
-                            return true;
-        }
-        return false;
+        return getValue(item) >= 0;
     }
 }

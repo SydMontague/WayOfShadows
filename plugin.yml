@@ -1,7 +1,7 @@
 name: WayOfShadows
 main: de.craftlancer.wayofshadows.WayOfShadows
 dev-url: http://dev.bukkit.org/server-mods/WayOfShadows
-version: 0.5
+version: 0.5.1
 description: Effect, BackStab, GrapplingHook, AirAssassionation and PickPocket skills
 softdepend: [SkillLevels]
 permissions:
@@ -17,3 +17,13 @@ permissions:
   shadow.<skillname>.lore.<lore>:    
     description: Allows you to use the skill with items which lore contains the String <lore>.
     default: false
+  shadow.<pickpocketskill>.exempt:
+    description: Players with this permissions are immune against this pickpocket skill
+    default: false
+  shadow.reload:
+    description: Allows to use the /wayofshadows command, which reloads the plugin's config and skills
+    default: op
+commands:
+  wayofshadows:
+    description: Reload the plugin
+    usage: Reload the plugin

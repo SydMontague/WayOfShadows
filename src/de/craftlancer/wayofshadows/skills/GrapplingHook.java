@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -34,6 +35,7 @@ public class GrapplingHook extends Skill
     private ValueWrapper maxDistance;
     private ValueWrapper distanceToInitial;
     private ValueWrapper itemsPerBlock;
+    private boolean pickupArrow;
     
     private List<String> pullLore;
     private List<Integer> pullItems;
@@ -60,6 +62,7 @@ public class GrapplingHook extends Skill
         maxDistance = new ValueWrapper(config.getString(key + ".maxDistance", "0"));
         distanceToInitial = new ValueWrapper(config.getString(key + ".distanceToInitial", "0"));
         itemsPerBlock = new ValueWrapper(config.getString(key + ".itemsPerBlock", "0"));
+        pickupArrow = config.getBoolean(key + ".canPickupArrow", false);
     }
     
     public GrapplingHook(WayOfShadows instance, String key, int hook, int pull, long bTime, int maxDist, int initDistance, double ipb, String string, String string2, String string3)
@@ -101,6 +104,8 @@ public class GrapplingHook extends Skill
             ItemStack item = event.getItem().clone();
             item.setAmount(1);
             
+            if (!pickupArrow)
+                ((CraftArrow) arrow).getHandle().fromPlayer = 2; // NMS
             arrow.setMetadata(getName() + ".playerLocation", new FixedMetadataValue(plugin, p.getLocation()));
             p.setMetadata(getName() + ".hookArrow", new FixedMetadataValue(plugin, arrow));
             
@@ -152,19 +157,17 @@ public class GrapplingHook extends Skill
         
         p.teleport(initLoc);
         Arrow ball = p.launchProjectile(Arrow.class);
-        
         ball.setMetadata(getName() + ".teleportArrow", new FixedMetadataValue(plugin, true));
+        
         p.setMetadata(getName() + ".teleportArrow", new FixedMetadataValue(plugin, ball.getEntityId()));
         
         p.getInventory().removeItem(new ItemStack(item));
-        
-        setOnCooldown(p);
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onHookHit(ProjectileHitEvent e)
     {
-        if (!e.getEntity().getType().equals(EntityType.ARROW) || !e.getEntity().getShooter().getType().equals(EntityType.PLAYER))
+        if (!e.getEntity().getType().equals(EntityType.ARROW) || !(e.getEntity().getShooter() instanceof Player))
             return;
         
         Player p = (Player) e.getEntity().getShooter();
@@ -212,6 +215,7 @@ public class GrapplingHook extends Skill
             p.setFallDistance(0);
             p.removeMetadata(getName() + ".teleportArrow", plugin);
             p.removeMetadata(getName() + ".hookArrow", plugin);
+            setOnCooldown(p);
         }
     }
     
@@ -229,7 +233,7 @@ public class GrapplingHook extends Skill
     
     private boolean isPullItem(ItemStack item)
     {
-        if (pullItems.contains(item.getTypeId()))
+        if (pullItems.contains(item.getType().getId()))
             return true;
         
         if (item.hasItemMeta())
@@ -262,6 +266,7 @@ public class GrapplingHook extends Skill
         config.set(getName() + ".maxDistance", maxDistance.getInput());
         config.set(getName() + ".distanceToInitial", distanceToInitial.getInput());
         config.set(getName() + ".itemsPerBlock", itemsPerBlock.getInput());
+        config.set(getName() + ".canPickupArrow", pickupArrow);
     }
     
     @Override

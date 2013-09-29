@@ -65,6 +65,8 @@ pickpocket:
   valueCatalogue: default
   maxValueMsg: You already stole enough!
   cantStealMsg: You can't steal that!
+  stealFailedMsg: You failed in stealing this item.
+  attemptStealMsg: Is there something moving in your pockets?
 airassassin:
   type: airassassination
   chance: 1

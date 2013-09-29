@@ -25,6 +25,9 @@ public class AirAssassination extends Skill
     private ValueWrapper damagePerHeight;
     private boolean negateFallOnSuccess;
     
+    private String attackerMsg;
+    private String victimMsg;
+    
     public AirAssassination(WayOfShadows instance, String key)
     {
         super(instance, key);
@@ -34,6 +37,9 @@ public class AirAssassination extends Skill
         maxHeight = new ValueWrapper(config.getString(key + ".maxHeight", "0"));
         damagePerHeight = new ValueWrapper(config.getString(key + ".damagePerHeight", "0"));
         negateFallOnSuccess = config.getBoolean(key + ".negateFallOnSuccess", false);
+        
+        attackerMsg = config.getString(key + ".attackerMsg", "");
+        victimMsg = config.getString(key + ".victimMsg", "");
     }
     
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -80,6 +86,10 @@ public class AirAssassination extends Skill
                 return;
             
             e.setDamage(e.getDamage() + height * damagePerHeight.getValue(level));
+            if (!attackerMsg.isEmpty())
+                p.sendMessage(attackerMsg);
+            if (!victimMsg.isEmpty() && e.getEntity().getType().equals(EntityType.PLAYER))
+                ((Player) e.getEntity()).sendMessage(victimMsg);
             if (negateFallOnSuccess)
                 p.setFallDistance(0);
         }
@@ -98,6 +108,9 @@ public class AirAssassination extends Skill
         config.set(getName() + ".maxHeight", maxHeight.getInput());
         config.set(getName() + ".damagePerHeight", damagePerHeight.getInput());
         config.set(getName() + ".negateFallDamage", negateFallOnSuccess);
+        
+        config.set(getName() + ".attackerMsg", attackerMsg);
+        config.set(getName() + ".victimMsg", victimMsg);
     }
     
     @Override
