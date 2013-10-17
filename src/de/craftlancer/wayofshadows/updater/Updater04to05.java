@@ -78,24 +78,26 @@ public class Updater04to05
         
         String path = "poison.items";
         
-        for (String key : config.getConfigurationSection(path).getKeys(false))
-        {
-            List<ItemEffect> list = new ArrayList<ItemEffect>();
-            for (String effect : config.getConfigurationSection(path + "." + key).getKeys(false))
+        if (config.getConfigurationSection(path) != null)
+            for (String key : config.getConfigurationSection(path).getKeys(false))
             {
-                String npath = path + "." + key + "." + effect;
-                ItemEffect i = new ItemEffect();
-                i.key = effect;
-                i.type = PotionEffectType.getById(config.getInt(npath + ".type")) != null ? PotionEffectType.getById(config.getInt(npath + ".type")) : PotionEffectType.getByName(config.getString(npath + ".type"));
-                i.chance = config.getDouble(npath + ".chance", 0.0D);
-                i.duration = config.getInt(npath + ".duration", 0) * 20;
-                i.strength = config.getInt(npath + ".strength", 0);
-                i.sneak = config.getBoolean(npath + ".onsneak", false);
-                i.angle = config.getDouble(npath + ".maxangle", 0.0D);
-                list.add(i);
+                List<ItemEffect> list = new ArrayList<ItemEffect>();
+                if (config.getConfigurationSection(path + "." + key) != null)
+                    for (String effect : config.getConfigurationSection(path + "." + key).getKeys(false))
+                    {
+                        String npath = path + "." + key + "." + effect;
+                        ItemEffect i = new ItemEffect();
+                        i.key = effect;
+                        i.type = PotionEffectType.getById(config.getInt(npath + ".type")) != null ? PotionEffectType.getById(config.getInt(npath + ".type")) : PotionEffectType.getByName(config.getString(npath + ".type"));
+                        i.chance = config.getDouble(npath + ".chance", 0.0D);
+                        i.duration = config.getInt(npath + ".duration", 0) * 20;
+                        i.strength = config.getInt(npath + ".strength", 0);
+                        i.sneak = config.getBoolean(npath + ".onsneak", false);
+                        i.angle = config.getDouble(npath + ".maxangle", 0.0D);
+                        list.add(i);
+                    }
+                tmp.put(key, list);
             }
-            tmp.put(key, list);
-        }
         
         return tmp;
     }
@@ -105,19 +107,20 @@ public class Updater04to05
         Map<String, BackstabItem> tmp = new HashMap<String, BackstabItem>();
         String path = "backstab.items";
         
-        for (String key : config.getConfigurationSection(path).getKeys(false))
-        {
-            BackstabItem i = new BackstabItem();
-            final String npath = path + "." + key;
-            i.chance = config.getDouble(npath + ".chance", 0.0D);
-            i.critchance = config.getDouble(npath + ".critchance", 0.0D);
-            i.critmultiplier = config.getDouble(npath + ".critmultiplier", 0.0D);
-            i.critsneak = config.getBoolean(npath + ".critonsneak", false);
-            i.multiplier = config.getDouble(npath + ".multiplier", 0.0D);
-            i.sneak = config.getBoolean(npath + ".onsneak", false);
-            i.angle = config.getDouble(npath + ".maxangle", 0.0D);
-            tmp.put(key, i);
-        }
+        if (config.getConfigurationSection(path) != null)
+            for (String key : config.getConfigurationSection(path).getKeys(false))
+            {
+                BackstabItem i = new BackstabItem();
+                final String npath = path + "." + key;
+                i.chance = config.getDouble(npath + ".chance", 0.0D);
+                i.critchance = config.getDouble(npath + ".critchance", 0.0D);
+                i.critmultiplier = config.getDouble(npath + ".critmultiplier", 0.0D);
+                i.critsneak = config.getBoolean(npath + ".critonsneak", false);
+                i.multiplier = config.getDouble(npath + ".multiplier", 0.0D);
+                i.sneak = config.getBoolean(npath + ".onsneak", false);
+                i.angle = config.getDouble(npath + ".maxangle", 0.0D);
+                tmp.put(key, i);
+            }
         
         return tmp;
     }

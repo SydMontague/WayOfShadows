@@ -87,6 +87,8 @@ public class WayOfShadows extends JavaPlugin
         if (!new File(getDataFolder(), "values.yml").exists())
             saveResource("values.yml", false);
         
+        reloadConfig();
+        
         valueConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "values.yml"));
         config = getConfig();
         
