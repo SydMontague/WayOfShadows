@@ -1,6 +1,6 @@
 default:
     items:
-        1: 5
+        STONE: 5
     names:
         MySword: 10
     lore:

@@ -2,6 +2,7 @@ package de.craftlancer.wayofshadows;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -23,6 +24,7 @@ import de.craftlancer.skilllevels.SkillLevels;
 import de.craftlancer.wayofshadows.metrics.Metrics;
 import de.craftlancer.wayofshadows.skills.Skill;
 import de.craftlancer.wayofshadows.updater.Updater04to05;
+import de.craftlancer.wayofshadows.updater.Updater05to053;
 import de.craftlancer.wayofshadows.utils.SkillFactory;
 
 //TODO pickpocket for chests - low prio
@@ -110,6 +112,9 @@ public class WayOfShadows extends JavaPlugin
             Bukkit.getPluginManager().registerEvents(s, this);
         }
         
+        if (config.getInt("configVersion") == 1)
+            new Updater05to053(this).update();
+        
     }
     
     @Override
@@ -122,6 +127,11 @@ public class WayOfShadows extends JavaPlugin
         }
         
         return true;
+    }
+    
+    public Set<Skill> getSkills()
+    {
+        return skills;
     }
     
     /**
@@ -171,5 +181,15 @@ public class WayOfShadows extends JavaPlugin
     public void error(String s)
     {
         log.severe(s);
+    }
+    
+    public FileConfiguration getValueConfig()
+    {
+        return valueConfig;
+    }
+    
+    public Collection<ValueCatalogue> getValueCatalogues()
+    {
+        return valCatalogue.values();
     }
 }

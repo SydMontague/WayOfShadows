@@ -225,7 +225,7 @@ public class PickPocket extends Skill
         config.set(getName() + ".maxValue", maxValue.getInput());
         config.set(getName() + ".maxAngle", maxAngle.getInput());
         config.set(getName() + ".onSneak", onSneak);
-        config.set(getName() + ".valueCatalogue", valueCatalogue);
+        config.set(getName() + ".valueCatalogue", valueCatalogue.getCatalogueName());
         
         config.set(getName() + ".maxValueMsg", maxValueMsg);
         config.set(getName() + ".cantStealMsg", cantStealMsg);

@@ -31,6 +31,7 @@ public class EffectSkill extends Skill
     private ValueWrapper strength;
     private boolean onSneak;
     
+    @SuppressWarnings("deprecation")
     public EffectSkill(WayOfShadows instance, String key)
     {
         super(instance, key);
@@ -44,8 +45,21 @@ public class EffectSkill extends Skill
         strength = new ValueWrapper(config.getString(key + ".strength", "0"));
         
         onSneak = config.getBoolean(key + ".onSneak", false);
+        
+        if (type == null)
+        {
+            instance.getLogger().severe("You don't have a valid effect for the skill " + key + ".");
+            instance.getLogger().severe("The plugin is setting it to effectless config to prevent errors.");
+            type = PotionEffectType.FIRE_RESISTANCE;
+            duration = new ValueWrapper(0);
+            strength = new ValueWrapper(0);
+        }
     }
     
+    /**
+     * Constructor for pre 0.5 Updater
+     */
+    @Deprecated
     public EffectSkill(WayOfShadows instance, String key, String item, ItemEffect i)
     {
         super(instance, key, item);

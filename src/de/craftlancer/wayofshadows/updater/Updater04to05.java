@@ -32,6 +32,7 @@ public class Updater04to05
         config = plugin.getConfig();
     }
     
+    @SuppressWarnings("deprecation")
     public void update()
     {
         Map<String, List<ItemEffect>> effectItem = loadPoisonItems();

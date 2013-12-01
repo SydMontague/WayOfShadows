@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +13,7 @@ public class ValueCatalogue
 {
     private String catalogueName;
     private int defaultValue;
-    private Map<Integer, Integer> itemValues = new HashMap<Integer, Integer>();
+    private Map<Material, Integer> itemValues = new HashMap<Material, Integer>();
     private Map<String, Integer> nameValues = new HashMap<String, Integer>();
     private Map<String, Integer> loreValues = new HashMap<String, Integer>();
     private Map<String, Map<Integer, Integer>> enchantmentValues = new HashMap<String, Map<Integer, Integer>>();
@@ -36,15 +37,14 @@ public class ValueCatalogue
         
         if (config.isConfigurationSection(catalogueName + ".items"))
             for (String key : config.getConfigurationSection(catalogueName + ".items").getKeys(false))
-                try
-                {
-                    itemValues.put(Integer.parseInt(key), config.getInt(catalogueName + ".items." + key));
-                }
-                catch (NumberFormatException e)
-                {
-                    instance.error("A itemkey in valueCatalogue \"" + catalogueName + "\" is not a integer!");
-                    continue;
-                }
+            {
+                Material mat = Material.matchMaterial(key);
+                
+                if (mat == null)
+                    instance.error("A itemkey in valueCatalogue \"" + catalogueName + "\" is no valid Material.");
+                else
+                    itemValues.put(mat, config.getInt(catalogueName + ".items." + key));
+            }
         
         if (config.isConfigurationSection(catalogueName + ".names"))
             for (String key : config.getConfigurationSection(catalogueName + ".names").getKeys(false))
@@ -62,6 +62,7 @@ public class ValueCatalogue
                 for (String level : config.getConfigurationSection(catalogueName + ".enchantments." + key).getKeys(false))
                     try
                     {
+                        
                         helpmap.put(Integer.parseInt(level), config.getInt(catalogueName + ".enchantments." + key + "." + level));
                     }
                     catch (NumberFormatException e)
@@ -87,8 +88,8 @@ public class ValueCatalogue
     {
         int value = 0;
         
-        if (itemValues.containsKey(item.getType().getId()))
-            value += itemValues.get(item.getType().getId());
+        if (itemValues.containsKey(item.getType().name()))
+            value += itemValues.get(item.getType().name());
         
         if (item.hasItemMeta())
         {
@@ -129,5 +130,23 @@ public class ValueCatalogue
     public boolean canSteal(ItemStack item)
     {
         return getValue(item) >= 0;
+    }
+    
+    public void save(FileConfiguration config)
+    {
+        config.set(catalogueName + ".defaultValue", defaultValue);
+        
+        for (Entry<Material, Integer> item : itemValues.entrySet())
+            config.set(catalogueName + ".items." + item.getKey().name(), item.getValue());
+        
+        for (Entry<String, Integer> item : nameValues.entrySet())
+            config.set(catalogueName + ".names." + item.getKey(), item.getValue());
+        
+        for (Entry<String, Integer> item : loreValues.entrySet())
+            config.set(catalogueName + ".lore." + item.getKey(), item.getValue());
+        
+        for (Entry<String, Map<Integer, Integer>> item : enchantmentValues.entrySet())
+            for (Entry<Integer, Integer> value : item.getValue().entrySet())
+                config.set(catalogueName + ".enchantments." + item.getKey() + "." + value.getKey(), value.getValue());
     }
 }

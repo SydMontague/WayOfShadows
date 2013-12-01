@@ -1,8 +1,10 @@
 package de.craftlancer.wayofshadows.skills;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -23,7 +25,7 @@ public abstract class Skill implements Listener
     
     private String name;
     private List<String> lore;
-    private List<Integer> items;
+    private List<Material> items = new LinkedList<Material>();
     private List<String> itemNames;
     private String levelSystem;
     private String cooldownMsg;
@@ -34,7 +36,17 @@ public abstract class Skill implements Listener
         plugin = instance;
         name = key;
         lore = instance.getConfig().getStringList(key + ".lore");
-        items = instance.getConfig().getIntegerList(key + ".items");
+        
+        for (String s : instance.getConfig().getStringList(key + ".items"))
+        {
+            Material mat = Material.matchMaterial(s);
+            
+            if (mat == null)
+                instance.getLogger().warning("An item is not a valid Material: " + s);
+            else
+                items.add(mat);
+        }
+        
         itemNames = instance.getConfig().getStringList(key + ".names");
         levelSystem = instance.getConfig().getString(key + ".levelSystem", null);
         cooldown = new ValueWrapper(instance.getConfig().getString(key + ".cooldown", "0"));
@@ -51,8 +63,8 @@ public abstract class Skill implements Listener
         for (String l : itemNames)
             plugin.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".names." + l, PermissionDefault.FALSE));
         
-        for (Integer l : items)
-            plugin.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".item." + l, PermissionDefault.FALSE));
+        for (Material l : items)
+            plugin.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".item." + l.name(), PermissionDefault.FALSE));
     }
     
     public void unregisterPermissions()
@@ -63,10 +75,14 @@ public abstract class Skill implements Listener
         for (String l : itemNames)
             plugin.getServer().getPluginManager().removePermission("shadow." + getName() + ".names." + l);
         
-        for (Integer l : items)
-            plugin.getServer().getPluginManager().removePermission("shadow." + getName() + ".item." + l);
+        for (Material l : items)
+            plugin.getServer().getPluginManager().removePermission("shadow." + getName() + ".item." + l.name());
     }
     
+    /**
+     * Constructor for pre 0.5 Updater
+     */
+    @Deprecated
     public Skill(WayOfShadows instance, String key, String item)
     {
         plugin = instance;
@@ -74,9 +90,20 @@ public abstract class Skill implements Listener
         
         lore = new ArrayList<String>();
         itemNames = new ArrayList<String>();
-        items = new ArrayList<Integer>();
+        items = new ArrayList<Material>();
         
-        items.add(Integer.parseInt(item));
+        Material mat;
+        try
+        {
+            mat = Material.getMaterial(Integer.parseInt(item));
+        }
+        catch (NumberFormatException e)
+        {
+            mat = Material.getMaterial(item);
+        }
+        
+        if (mat != null)
+            items.add(mat);
     }
     
     /**
@@ -114,7 +141,7 @@ public abstract class Skill implements Listener
      * 
      * @return a list of Integers, which can define a skillitem via itemId
      */
-    public List<Integer> getItemIds()
+    public List<Material> getItemIds()
     {
         return items;
     }
@@ -196,7 +223,7 @@ public abstract class Skill implements Listener
         if (p.hasPermission("shadow." + getName()))
             return true;
         
-        if (p.hasPermission("shadow." + getName() + ".item." + item.getType().getId()))
+        if (p.hasPermission("shadow." + getName() + ".item." + item.getType().name()))
             return true;
         
         if (item.hasItemMeta())
@@ -226,7 +253,10 @@ public abstract class Skill implements Listener
         if (getItemIds().isEmpty() && getItemNames().isEmpty() && getLore().isEmpty())
             return true;
         
-        if (getItemIds().contains(item.getType().getId()))
+        if (item == null)
+            return false;
+        
+        if (getItemIds().contains(item.getType()))
             return true;
         
         if (item.hasItemMeta())
@@ -249,8 +279,12 @@ public abstract class Skill implements Listener
      */
     public void save(FileConfiguration config)
     {
+        List<String> mat = new LinkedList<String>();
+        for (Material m : items)
+            mat.add(m.name());
+        
         config.set(getName() + ".lore", lore);
-        config.set(getName() + ".items", items);
+        config.set(getName() + ".items", mat);
         config.set(getName() + ".itemNames", itemNames);
         config.set(getName() + ".levelSystem", getLevelSys());
     }

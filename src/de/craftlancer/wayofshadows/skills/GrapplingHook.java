@@ -1,6 +1,7 @@
 package de.craftlancer.wayofshadows.skills;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -8,7 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_6_R3.entity.CraftArrow;
+import org.bukkit.craftbukkit.v1_7_R1.entity.CraftArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -38,7 +39,7 @@ public class GrapplingHook extends Skill
     private boolean pickupArrow;
     
     private List<String> pullLore;
-    private List<Integer> pullItems;
+    private List<Material> pullItems = new LinkedList<Material>();
     private List<String> pullItemNames;
     
     private String distanceMsg;
@@ -52,7 +53,16 @@ public class GrapplingHook extends Skill
         
         pullLore = config.getStringList(key + ".pullLore");
         pullItemNames = config.getStringList(key + ".pullItemNames");
-        pullItems = config.getIntegerList(key + ".pullItems");
+        
+        for (String s : instance.getConfig().getStringList(key + ".pullItems"))
+        {
+            Material mat = Material.matchMaterial(s);
+            
+            if (mat == null)
+                instance.getLogger().warning("A pullitem in " + key + " is not a valid Material.");
+            else
+                pullItems.add(mat);
+        }
         
         distanceMsg = config.getString(key + ".distanceMsg");
         initialMsg = config.getString(key + ".initialMsg");
@@ -65,14 +75,17 @@ public class GrapplingHook extends Skill
         pickupArrow = config.getBoolean(key + ".canPickupArrow", false);
     }
     
+    /**
+     * Constructor for pre 0.5 Updater
+     */
+    @Deprecated
     public GrapplingHook(WayOfShadows instance, String key, int hook, int pull, long bTime, int maxDist, int initDistance, double ipb, String string, String string2, String string3)
     {
         super(instance, key, String.valueOf(hook));
         
         pullLore = new ArrayList<String>();
         pullItemNames = new ArrayList<String>();
-        pullItems = new ArrayList<Integer>();
-        pullItems.add(pull);
+        pullItems.add(Material.getMaterial(pull));
         
         distanceMsg = string3;
         initialMsg = string2;
@@ -233,7 +246,7 @@ public class GrapplingHook extends Skill
     
     private boolean isPullItem(ItemStack item)
     {
-        if (pullItems.contains(item.getType().getId()))
+        if (pullItems.contains(item.getType()))
             return true;
         
         if (item.hasItemMeta())
@@ -252,10 +265,13 @@ public class GrapplingHook extends Skill
     public void save(FileConfiguration config)
     {
         super.save(config);
+        List<String> mat = new LinkedList<String>();
+        for (Material m : pullItems)
+            mat.add(m.name());
         
         config.set(getName() + ".type", "grapplinghook");
         config.set(getName() + ".pullLore", pullLore);
-        config.set(getName() + ".pullItems", pullItems);
+        config.set(getName() + ".pullItems", mat);
         config.set(getName() + ".pullItemNames", pullItemNames);
         
         config.set(getName() + ".distanceMsg", distanceMsg);

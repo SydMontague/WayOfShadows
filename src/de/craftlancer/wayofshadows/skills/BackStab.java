@@ -54,6 +54,10 @@ public class BackStab extends Skill
         critMsg = config.getString(key + ".critMsg");
     }
     
+    /**
+     * Constructor for pre 0.5 Updater
+     */
+    @Deprecated
     public BackStab(WayOfShadows instance, String key, String item, BackstabItem value, String msg1, String msg2, String msg3)
     {
         super(instance, key, item);

@@ -66,6 +66,14 @@ public class ValueWrapper
             return Double.valueOf(getMathResult(input, level, int2));
     }
     
+    public double getValue(int level, double value2)
+    {
+        if (value != null)
+            return value;
+        else
+            return Double.valueOf(getMathResult(input, level, value2));
+    }
+    
     /**
      * Get the integer value of this object with the given level
      * 
@@ -101,7 +109,7 @@ public class ValueWrapper
     
     private String getMathResult(String form, double x, String completForm)
     {
-        if (x <= 0)
+        if (x < 0)
             return "0";
         
         form = form.replace("x", String.valueOf(x));

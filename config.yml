@@ -1,15 +1,15 @@
-configVersion: 1
+configVersion: 2
 backstab:
   type: backstab
   lore: []
   items: 
-    - 267
-    - 272
-    - 276
-    - 283
-    - 268
-    - 359
-    - 261
+    - IRON_SWORD
+    - STONE_SWORD
+    - DIAMOND_SWORD
+    - GOLD_SWORD
+    - WOOD_SWORD
+    - SHEARS
+    - BOW
   names: 
     - BackStabItem
   chance: 1
@@ -26,7 +26,7 @@ poison:
   type: effect
   lore: []
   items:
-  - 294
+  - GOLD_HOE
   itemNames: []
   effectType: POISON
   chance: 1
@@ -37,12 +37,12 @@ poison:
 hook:
   lore: []
   items:
-  - 262
+  - ARROW
   itemNames: []
   type: grapplinghook
   pullLore: []
   pullItems:
-  - 287
+  - STRING
   pullItemNames: []
   distanceMsg: Your hook is to far away!
   initialMsg: You are to far away from your initial location!
@@ -74,4 +74,25 @@ airassassin:
   maxHeight: 4
   damagePerHeight: 24
   negateFallOnSuccess : true
+lockpick:
+  type: lockpick
+  cooldown: 10
+  cooldownMsg: Lockpick is for %time% seconds on cooldown.
+  successMsg: You successfully picked to lock!
+  failMsg: You failed at picking the lock!
+  closeCooldownMsg: You can't close this for another %time% seconds!
+  items:
+    - GOLD_INGOT
+  chance: 0.25*y
+  loseItemOnFail: true
+  loseItemOnSuccess: true
+  damageOnFail: 5
+  closeCooldown: 300
+  pickable:
+    WOODEN_DOOR: 1
+    TRAP_DOOR: 1
+    FENCE_GATE: 1
+    LEVER: 1
+    
+    
   
