@@ -117,8 +117,6 @@ public class GrapplingHook extends Skill
             ItemStack item = event.getItem().clone();
             item.setAmount(1);
             
-            if (!pickupArrow)
-                ((CraftArrow) arrow).getHandle().fromPlayer = 2; // NMS
             arrow.setMetadata(getName() + ".playerLocation", new FixedMetadataValue(plugin, p.getLocation()));
             p.setMetadata(getName() + ".hookArrow", new FixedMetadataValue(plugin, arrow));
             
@@ -170,6 +168,8 @@ public class GrapplingHook extends Skill
         
         p.teleport(initLoc);
         Arrow ball = p.launchProjectile(Arrow.class);
+        if (!pickupArrow)
+            ((CraftArrow) ball).getHandle().fromPlayer = 2; // NMS
         ball.setMetadata(getName() + ".teleportArrow", new FixedMetadataValue(plugin, true));
         
         p.setMetadata(getName() + ".teleportArrow", new FixedMetadataValue(plugin, ball.getEntityId()));
