@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import de.craftlancer.wayofshadows.WayOfShadows;
+import de.craftlancer.wayofshadows.event.ShadowLockpickEvent;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
 public class LockpickSkill extends Skill
@@ -93,13 +94,19 @@ public class LockpickSkill extends Skill
         if (c == 0)
             return;
         
-        if (isOnCooldown(e.getPlayer()))
+        if (isOnCooldown(p))
         {
-            e.getPlayer().sendMessage(getCooldownMsg(e.getPlayer()));
+            p.sendMessage(getCooldownMsg(p));
             return;
         }
         
-        if (Math.random() <= c)
+        ShadowLockpickEvent event = new ShadowLockpickEvent(p, this, e.getClickedBlock(), Math.random() <= c);
+        plugin.getServer().getPluginManager().callEvent(event);
+        
+        if (event.isCancelled())
+            return;
+        
+        if (event.isSuccess())
         {
             e.setCancelled(false);
             

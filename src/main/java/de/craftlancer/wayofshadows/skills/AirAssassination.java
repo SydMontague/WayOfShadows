@@ -61,7 +61,7 @@ public class AirAssassination extends Skill
         else
             return;
         
-        if (!isSkillItem(item) || !hasPermission(p, item))
+        if (p == null || !isSkillItem(item) || !hasPermission(p, item))
             return;
         
         int level = plugin.getLevel(p, getLevelSys());
