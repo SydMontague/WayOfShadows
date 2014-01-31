@@ -148,8 +148,8 @@ public class WayOfShadows extends JavaPlugin
      * Get the ValueCatalogue, which is mapped to the string
      * 
      * @param string
-     *            - the name of the requested catalogue
-     * @return the catalogue which is mappes to string
+     *        - the name of the requested catalog
+     * @return the catalog which is mapped to the input string
      */
     public ValueCatalogue getValueCatalogue(String string)
     {
@@ -160,9 +160,9 @@ public class WayOfShadows extends JavaPlugin
      * Get the level of a player in a certain level system
      * 
      * @param p
-     *            - the player the level is calculated of
+     *        - the player the level is calculated of
      * @param levelSystem
-     *            - the name of the system
+     *        - the name of the system
      * @return the level of the player in the given system or 0 if the plugin is
      *         not loaded,
      *         or the player is not registered in this system
@@ -176,7 +176,7 @@ public class WayOfShadows extends JavaPlugin
      * Just a wrapper for log.severe();
      * 
      * @param s
-     *            - the message, which should be given out
+     *        - the message, which should be given out
      */
     public void error(String s)
     {

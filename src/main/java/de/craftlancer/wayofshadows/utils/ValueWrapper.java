@@ -36,7 +36,7 @@ public class ValueWrapper
      * Get the value of this object with the given level
      * 
      * @param level - the level for which the value is calculated for (x in the
-     *            inputString)
+     *        inputString)
      * @return the double value of this wrapper
      */
     public double getValue(int level)
@@ -53,9 +53,9 @@ public class ValueWrapper
      * Get the value of the object with 2 parameters.
      * 
      * @param level - the level for which the value is calculated for (x in the
-     *            inputString)
+     *        inputString)
      * @param int2 - the 2nd paramter for which is value is calculated for (y in
-     *            the inputString)
+     *        the inputString)
      * @return the double value of this wrapper
      */
     public double getValue(int level, int int2)
@@ -78,7 +78,7 @@ public class ValueWrapper
      * Get the integer value of this object with the given level
      * 
      * @param level - the level for which the value is calculated for (x in the
-     *            inputString)
+     *        inputString)
      * @return the integer value of this wrapper
      */
     public int getIntValue(int level)

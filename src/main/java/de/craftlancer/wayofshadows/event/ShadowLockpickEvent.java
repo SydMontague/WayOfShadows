@@ -19,16 +19,32 @@ public class ShadowLockpickEvent extends ShadowEvent
         this.success = success;
     }
     
+    /**
+     * Get the block that the player tries to pick.
+     * 
+     * @return the picked block
+     */
     public Block getBlock()
     {
         return block;
     }
     
+    /**
+     * Get whether the picking is successful. 
+     * When the event is called, the plugin already calculated it's values.
+     * 
+     * @return whether the lock is picked or not
+     */
     public boolean isSuccess()
     {
         return success;
     }
     
+    /**
+     * Set if the lockpick shall be a success or not
+     * 
+     * @param success true if the pick shall be broken, false if not
+     */
     public void setSuccess(boolean success)
     {
         this.success = success;

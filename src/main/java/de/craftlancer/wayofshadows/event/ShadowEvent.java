@@ -50,7 +50,7 @@ public abstract class ShadowEvent extends Event implements Cancellable
     }
     
     /**
-     * Set if the event should be canceled or not.
+     * Set if the event should be cancelled or not.
      * 
      * @param cancel - boolean if the event should be cancelled
      */

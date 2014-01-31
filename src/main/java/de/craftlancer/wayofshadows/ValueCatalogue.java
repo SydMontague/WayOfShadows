@@ -22,13 +22,13 @@ public class ValueCatalogue
      * Create a new ValueCatalogue
      * 
      * @param instance
-     *            - the instance of the plugin, the catalogue is created
-     *            for
+     *        - the instance of the plugin, the catalog is created
+     *        for
      * @param config
-     *            - the config, where the catalogue is saved in
+     *        - the config, where the catalog is saved in
      * @param catalogueName
-     *            - the name of the catalogue, which is used in the
-     *            config
+     *        - the name of the catalog, which is used in the
+     *        config
      */
     public ValueCatalogue(WayOfShadows instance, FileConfiguration config, String catalogueName)
     {
@@ -76,13 +76,13 @@ public class ValueCatalogue
     }
     
     /**
-     * Get the value of the item, according to this catalogue based on itemtype,
-     * name, lore and enchantments.
+     * Get the value of the item, according to this catalog based on item type,
+     * name, lore and enchantment.
      * 
      * @param item
-     *            - the item you want the value of
+     *        - the item you want the value of
      * @return the value of the item. If no property of the item matches with
-     *         the catalogue it returns 0;
+     *         the catalog it returns 0;
      */
     public int getValue(ItemStack item)
     {
@@ -118,9 +118,9 @@ public class ValueCatalogue
     }
     
     /**
-     * Get the name of the catalogue
+     * Get the name of the catalog
      * 
-     * @return the name of the catalogue
+     * @return the name of the catalog
      */
     public String getCatalogueName()
     {

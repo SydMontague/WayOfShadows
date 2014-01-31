@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
 import de.craftlancer.wayofshadows.skills.AirAssassination;
 
 /**
- * Called when a player performs a air assassionation
+ * Called when a player performs a air assassination
  */
 public class ShadowAirAssassinEvent extends ShadowEvent
 {
@@ -33,7 +33,7 @@ public class ShadowAirAssassinEvent extends ShadowEvent
     }
     
     /**
-     * Returns the height, based on fallheight - minheight of the skill.
+     * Returns the height, based on fall height subtracted by the minimal height of the skill.
      * 
      * @return the height, which is accounted for this attack
      */

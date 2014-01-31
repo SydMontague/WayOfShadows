@@ -161,7 +161,7 @@ public abstract class Skill implements Listener
      * It uses cooldownMsg as basis.
      * 
      * @param p
-     *            - the player the message is made for
+     *        - the player the message is made for
      * @return a String, which replaced every %time% with the remaining cooldown
      *         time
      */
@@ -174,7 +174,7 @@ public abstract class Skill implements Listener
      * Checks if a player has a cooldown for this skill.
      * 
      * @param p
-     *            - the checked Player
+     *        - the checked Player
      * @return the boolean value if the player is on cooldown
      */
     public boolean isOnCooldown(Player p)
@@ -187,7 +187,7 @@ public abstract class Skill implements Listener
      * skill.
      * 
      * @param p
-     *            - the Player, which is set on cooldown
+     *        - the Player, which is set on cooldown
      */
     public void setOnCooldown(Player p)
     {
@@ -200,7 +200,7 @@ public abstract class Skill implements Listener
      * Get the remaining cooldown time of a player in seconds
      * 
      * @param p
-     *            - the Player
+     *        - the Player
      * @return the remaining cooldown in seconds
      */
     public double getRemainingCooldown(Player p)
@@ -213,9 +213,9 @@ public abstract class Skill implements Listener
      * Item
      * 
      * @param p
-     *            - the Player which tries to perform the skill
+     *        - the Player which tries to perform the skill
      * @param item
-     *            - the item as ItemStack
+     *        - the item as ItemStack
      * @return a boolean value whether he has the permission or not
      */
     public boolean hasPermission(Player p, ItemStack item)
@@ -245,7 +245,7 @@ public abstract class Skill implements Listener
      * itemIds, names and lore for this skill.
      * 
      * @param item
-     *            - the item as ItemStack
+     *        - the item as ItemStack
      * @return a boolean value whether it's a skillitem or not
      */
     public boolean isSkillItem(ItemStack item)
@@ -275,7 +275,7 @@ public abstract class Skill implements Listener
      * Save the skill to the given config file
      * 
      * @param config
-     *            - the config where the skill is saved to
+     *        - the config where the skill is saved to
      */
     public void save(FileConfiguration config)
     {

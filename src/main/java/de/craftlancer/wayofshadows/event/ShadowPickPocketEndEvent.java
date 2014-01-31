@@ -6,6 +6,9 @@ import org.bukkit.event.HandlerList;
 import de.craftlancer.wayofshadows.skills.PickPocket;
 import de.craftlancer.wayofshadows.skills.Skill;
 
+/**
+ * Gets called when a pickpocket comes to it's end,
+ */
 public class ShadowPickPocketEndEvent extends ShadowEvent
 {
     private static final HandlerList handlers = new HandlerList();
