@@ -148,6 +148,10 @@ public class GrapplingHook extends Skill
         
         Location ploc = p.getEyeLocation();
         Location aloc = arrow.getLocation();
+        
+        if (!aloc.getWorld().equals(ploc.getWorld()))
+            return;
+        
         double distance1 = ploc.distance(aloc);
         int level = plugin.getLevel(p, getLevelSys());
         int amount = (int) Math.ceil(distance1 * itemsPerBlock.getValue(level));
