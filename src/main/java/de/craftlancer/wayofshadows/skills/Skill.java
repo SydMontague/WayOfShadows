@@ -47,7 +47,7 @@ public abstract class Skill implements Listener
                 items.add(mat);
         }
         
-        itemNames = instance.getConfig().getStringList(key + ".names");
+        itemNames = instance.getConfig().getStringList(key + ".itemNames");
         levelSystem = instance.getConfig().getString(key + ".levelSystem", null);
         cooldown = new ValueWrapper(instance.getConfig().getString(key + ".cooldown", "0"));
         cooldownMsg = instance.getConfig().getString(key + ".cooldownMsg", "This skill for %time% seconds on cooldown!");
