@@ -234,6 +234,8 @@ public abstract class Skill implements Listener
         {
             if (p.hasPermission("shadow." + getName() + ".name." + item.getItemMeta().getDisplayName()))
                 return true;
+            if (p.hasPermission("shadow." + getName() + ".names." + item.getItemMeta().getDisplayName()))
+                return true;
             if (item.getItemMeta().hasLore())
                 for (String str : getLore())
                     for (String str2 : item.getItemMeta().getLore())
