@@ -57,6 +57,8 @@ public abstract class Skill implements Listener
     
     protected void registerPermissions()
     {
+        plugin.getServer().getPluginManager().addPermission(new Permission("shadow." + getName(), PermissionDefault.FALSE));
+        
         for (String l : lore)
             plugin.getServer().getPluginManager().addPermission(new Permission("shadow." + getName() + ".lore." + l, PermissionDefault.FALSE));
         
@@ -69,6 +71,8 @@ public abstract class Skill implements Listener
     
     public void unregisterPermissions()
     {
+        plugin.getServer().getPluginManager().removePermission(new Permission("shadow." + getName()));
+        
         for (String l : lore)
             plugin.getServer().getPluginManager().removePermission("shadow." + getName() + ".lore." + l);
         
