@@ -19,9 +19,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mcstats.Metrics;
 
 import de.craftlancer.skilllevels.SkillLevels;
-import de.craftlancer.wayofshadows.metrics.Metrics;
 import de.craftlancer.wayofshadows.skills.Skill;
 import de.craftlancer.wayofshadows.updater.Updater04to05;
 import de.craftlancer.wayofshadows.updater.Updater05to053;
