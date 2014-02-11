@@ -33,7 +33,8 @@ public class ShadowAirAssassinEvent extends ShadowEvent
     }
     
     /**
-     * Returns the height, based on fall height subtracted by the minimal height of the skill.
+     * Returns the height, based on fall height subtracted by the minimal height
+     * of the skill.
      * 
      * @return the height, which is accounted for this attack
      */

@@ -30,7 +30,7 @@ public class ShadowLockpickEvent extends ShadowEvent
     }
     
     /**
-     * Get whether the picking is successful. 
+     * Get whether the picking is successful.
      * When the event is called, the plugin already calculated it's values.
      * 
      * @return whether the lock is picked or not
