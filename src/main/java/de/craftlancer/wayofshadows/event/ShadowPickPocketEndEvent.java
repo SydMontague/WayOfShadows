@@ -19,6 +19,7 @@ public class ShadowPickPocketEndEvent extends ShadowEvent
     {
         super(player, skill);
         this.victim = victim;
+        this.reason = reason;
     }
     
     @Override
