@@ -46,7 +46,7 @@ public class ValueWrapper
         else if (cache.containsKey(level))
             return cache.get(level);
         else
-            return Double.valueOf(getMathResult(input, level, input)).doubleValue();
+            return Double.valueOf(getMathResult(input, level, input));
     }
     
     /**

@@ -60,6 +60,7 @@ public class WayOfShadows extends JavaPlugin
         }
         catch (IOException e)
         {
+            getLogger().warning("Metrics failed to start!");
         }
     }
     

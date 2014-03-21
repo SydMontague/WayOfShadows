@@ -88,8 +88,8 @@ public class ValueCatalogue
     {
         int value = 0;
         
-        if (itemValues.containsKey(item.getType().name()))
-            value += itemValues.get(item.getType().name());
+        if (itemValues.containsKey(item.getType()))
+            value += itemValues.get(item.getType());
         
         if (item.hasItemMeta())
         {

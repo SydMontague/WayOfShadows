@@ -35,7 +35,7 @@ public class LockpickSkill extends Skill
     private String closeCooldownMsg;
     private String sneakMsg;
     
-    Map<Block, Long> closeMap = new HashMap<Block, Long>();
+    private Map<Block, Long> closeMap = new HashMap<Block, Long>();
     
     public LockpickSkill(WayOfShadows instance, String key)
     {

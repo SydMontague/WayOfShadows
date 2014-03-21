@@ -78,8 +78,8 @@ public class BackStab extends Skill
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e)
     {
-        ItemStack item = null;
-        Player p = null;
+        ItemStack item;
+        Player p;
         
         if (e.getDamager().getType().equals(EntityType.PLAYER))
         {
