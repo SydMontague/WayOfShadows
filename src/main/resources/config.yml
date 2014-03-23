@@ -55,13 +55,12 @@ pickpocket:
   type: pickpocket
   cooldown: 120
   cooldownMsg: Pickpocket is for %time% seconds on cooldown!
-  levelSystem: schurke
   maxAngle: 90
   chance: 1
   maxValue: 100
   maxDistance: 8
   onSneak: true
-  aboutOnDamage: true
+  abortOnDamage: true
   valueCatalogue: default
   maxValueMsg: You already stole enough!
   cantStealMsg: You can't steal that!

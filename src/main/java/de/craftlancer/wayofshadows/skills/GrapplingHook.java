@@ -9,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_7_R1.entity.CraftArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -172,8 +171,20 @@ public class GrapplingHook extends Skill
         
         p.teleport(initLoc);
         Arrow ball = p.launchProjectile(Arrow.class);
+        
         if (!pickupArrow)
-            ((CraftArrow) ball).getHandle().fromPlayer = 2; // NMS
+            try
+            {
+                Object handle = ball.getClass().getMethod("getHandle").invoke(ball);
+                handle.getClass().getField("fromPlayer").setInt(handle, 2);
+            }
+            catch (Exception exception)
+            {
+                plugin.getLogger().severe("Exception while handling the \"pickupArrow\" function!");
+                plugin.getLogger().severe("Please inform the author of the plugin, as he needs to update the plugin!");
+                exception.printStackTrace();
+            }
+        
         ball.setMetadata(getName() + ".teleportArrow", new FixedMetadataValue(plugin, true));
         
         p.setMetadata(getName() + ".teleportArrow", new FixedMetadataValue(plugin, ball.getEntityId()));

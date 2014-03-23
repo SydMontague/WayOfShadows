@@ -1,6 +1,7 @@
 package de.craftlancer.wayofshadows.skills;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
@@ -60,6 +61,12 @@ public class PickPocket extends Skill
         abortOnDamage = config.getBoolean(key + ".abortOnDamage", true);
         valueCatalogue = plugin.getValueCatalogue(config.getString(key + ".valueCatalogue"));
         
+        if(valueCatalogue == null)
+        {
+            plugin.getLogger().severe("The given valueCatalogue for " + key + " is invalid!");
+            plugin.getLogger().severe("This WILL throw errors in your console when someone tries to use this skill!");
+        }
+        
         maxValueMsg = config.getString(key + ".maxValueMsg", "You've reached your stealing limit.");
         cantStealMsg = config.getString(key + ".cantStealMsg", "You can't steal this Item.");
         stealFailedMsg = config.getString(key + ".stealFailedMsg", "You failed in stealing this item.");
@@ -77,6 +84,9 @@ public class PickPocket extends Skill
         
         Player victim = (Player) e.getRightClicked();
         
+        if(victim.getGameMode() == GameMode.CREATIVE || e.getPlayer().getGameMode() == GameMode.CREATIVE)
+            return;
+        
         if (!isSkillItem(item) || !hasPermission(p, item, victim))
             return;
         
@@ -92,8 +102,8 @@ public class PickPocket extends Skill
             }
             
             p.openInventory(victim.getInventory());
-            p.setMetadata("stealingPlayer", new FixedMetadataValue(plugin, victim));
-            p.setMetadata("stealingValue", new FixedMetadataValue(plugin, 0));
+            p.setMetadata("stealingPlayer." + getName(), new FixedMetadataValue(plugin, victim));
+            p.setMetadata("stealingValue." + getName(), new FixedMetadataValue(plugin, 0));
             
             new PickPocketCheckTask(p, victim, this, level).runTaskTimer(plugin, 10L, 10L);
         }
@@ -133,7 +143,7 @@ public class PickPocket extends Skill
     {
         Player p = ((Player) e.getWhoClicked());
         
-        if (!p.hasMetadata("stealingPlayer"))
+        if (!p.hasMetadata("stealingPlayer." + getName()))
             return;
         
         e.setCancelled(true);
@@ -150,28 +160,28 @@ public class PickPocket extends Skill
         if (!valueCatalogue.canSteal(item))
         {
             p.sendMessage(cantStealMsg);
-            plugin.getServer().getPluginManager().callEvent(new ShadowPickPocketFailEvent(p, this, (Player) p.getMetadata("stealingPlayer").get(0).value(), FailReason.UNSTEALABLE));
+            plugin.getServer().getPluginManager().callEvent(new ShadowPickPocketFailEvent(p, this, (Player) p.getMetadata("stealingPlayer." + getName()).get(0).value(), FailReason.UNSTEALABLE));
             return;
         }
         
         int level = plugin.getLevel(p, getLevelSys());
         int value = valueCatalogue.getValue(item);
         
-        if (p.getMetadata("stealingValue").get(0).asDouble() + value > maxValue.getIntValue(level))
+        if (p.getMetadata("stealingValue." + getName()).get(0).asDouble() + value > maxValue.getIntValue(level))
         {
             p.sendMessage(maxValueMsg);
-            plugin.getServer().getPluginManager().callEvent(new ShadowPickPocketFailEvent(p, this, (Player) p.getMetadata("stealingPlayer").get(0).value(), FailReason.UNSTEALABLE));
+            plugin.getServer().getPluginManager().callEvent(new ShadowPickPocketFailEvent(p, this, (Player) p.getMetadata("stealingPlayer." + getName()).get(0).value(), FailReason.UNSTEALABLE));
             return;
         }
         
         if (Math.random() < chance.getValue(level))
         {
-            ShadowPickPocketEvent event = new ShadowPickPocketEvent(p, this, (Player) p.getMetadata("stealingPlayer").get(0).value(), item);
+            ShadowPickPocketEvent event = new ShadowPickPocketEvent(p, this, (Player) p.getMetadata("stealingPlayer." + getName()).get(0).value(), item);
             Bukkit.getServer().getPluginManager().callEvent(event);
             
             if (event.isCancelled())
             {
-                plugin.getServer().getPluginManager().callEvent(new ShadowPickPocketFailEvent(p, this, (Player) p.getMetadata("stealingPlayer").get(0).value(), FailReason.CANCELLED));
+                plugin.getServer().getPluginManager().callEvent(new ShadowPickPocketFailEvent(p, this, (Player) p.getMetadata("stealingPlayer." + getName()).get(0).value(), FailReason.CANCELLED));
                 return;
             }
             
@@ -180,7 +190,7 @@ public class PickPocket extends Skill
         }
         else
         {
-            plugin.getServer().getPluginManager().callEvent(new ShadowPickPocketFailEvent(p, this, (Player) p.getMetadata("stealingPlayer").get(0).value(), FailReason.UNSTEALABLE));
+            plugin.getServer().getPluginManager().callEvent(new ShadowPickPocketFailEvent(p, this, (Player) p.getMetadata("stealingPlayer." + getName()).get(0).value(), FailReason.UNSTEALABLE));
             
             if (stealFailedMsg.isEmpty())
                 p.sendMessage(stealFailedMsg);
@@ -188,19 +198,19 @@ public class PickPocket extends Skill
                 p.sendMessage(attemptStealMsg);
         }
         
-        p.setMetadata("stealingValue", new FixedMetadataValue(plugin, p.getMetadata("stealingValue").get(0).asDouble() + value));
+        p.setMetadata("stealingValue." + getName(), new FixedMetadataValue(plugin, p.getMetadata("stealingValue." + getName()).get(0).asDouble() + value));
     }
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onClose(InventoryCloseEvent e)
     {
-        if (!e.getPlayer().hasMetadata("stealingPlayer"))
+        if (!e.getPlayer().hasMetadata("stealingPlayer." + getName()))
             return;
         
-        plugin.getServer().getPluginManager().callEvent(new ShadowPickPocketEndEvent((Player) e.getPlayer(), this, (Player) e.getPlayer().getMetadata("stealingPlayer").get(0).value(), EndReason.CLOSEINVENTORY));
+        plugin.getServer().getPluginManager().callEvent(new ShadowPickPocketEndEvent((Player) e.getPlayer(), this, (Player) e.getPlayer().getMetadata("stealingPlayer." + getName()).get(0).value(), EndReason.CLOSEINVENTORY));
         
-        e.getPlayer().removeMetadata("stealingPlayer", plugin);
-        e.getPlayer().removeMetadata("stealingValue", plugin);
+        e.getPlayer().removeMetadata("stealingPlayer." + getName(), plugin);
+        e.getPlayer().removeMetadata("stealingValue." + getName(), plugin);
         
         setOnCooldown((Player) e.getPlayer());
     }
@@ -208,10 +218,10 @@ public class PickPocket extends Skill
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDamage(EntityDamageEvent e)
     {
-        if (abortOnDamage && e.getEntity().hasMetadata("stealingPlayer") && e.getEntity().getType().equals(EntityType.PLAYER))
+        if (abortOnDamage && e.getEntity().hasMetadata("stealingPlayer." + getName()) && e.getEntity().getType().equals(EntityType.PLAYER))
         {
             ((Player) e.getEntity()).closeInventory();
-            plugin.getServer().getPluginManager().callEvent(new ShadowPickPocketEndEvent((Player) e.getEntity(), this, (Player) e.getEntity().getMetadata("stealingPlayer").get(0).value(), EndReason.PVP));
+            plugin.getServer().getPluginManager().callEvent(new ShadowPickPocketEndEvent((Player) e.getEntity(), this, (Player) e.getEntity().getMetadata("stealingPlayer." + getName()).get(0).value(), EndReason.PVP));
         }
     }
     
