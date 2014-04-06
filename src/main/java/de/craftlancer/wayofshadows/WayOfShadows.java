@@ -170,7 +170,7 @@ public class WayOfShadows extends JavaPlugin
      */
     public int getLevel(Player p, String levelSystem)
     {
-        return getSkillLevels() != null ? getSkillLevels().getUserLevel(levelSystem, p.getName()) : 0;
+        return getSkillLevels() != null ? getSkillLevels().getLevelSystem(levelSystem).getUser(p).getLevel() : 0;
     }
     
     /**

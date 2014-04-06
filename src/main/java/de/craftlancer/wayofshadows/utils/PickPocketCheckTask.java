@@ -29,7 +29,7 @@ public class PickPocketCheckTask extends BukkitRunnable
     @Override
     public void run()
     {
-        if (p1.getLocation().distance(p2.getLocation()) > skill.getMaxDistance().getValue(level))
+        if (!p1.getLocation().getWorld().equals(p2.getLocation().getWorld()) || p1.getLocation().distance(p2.getLocation()) > skill.getMaxDistance().getValue(level))
         {
             p1.closeInventory();
             Bukkit.getPluginManager().callEvent(new ShadowPickPocketEndEvent(p1, skill, p2, EndReason.DISTANCE));
