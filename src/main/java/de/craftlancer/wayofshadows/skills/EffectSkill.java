@@ -58,6 +58,10 @@ public class EffectSkill extends Skill
     
     /**
      * Constructor for pre 0.5 Updater
+     * @param instance plugin instance
+     * @param key of the skill
+     * @param item Material/ItemID of the skill
+     * @param i the ItemEffect
      */
     @Deprecated
     public EffectSkill(WayOfShadows instance, String key, String item, ItemEffect i)

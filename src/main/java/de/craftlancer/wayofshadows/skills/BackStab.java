@@ -56,6 +56,13 @@ public class BackStab extends Skill
     
     /**
      * Constructor for pre 0.5 Updater
+     * @param instance plugin instance
+     * @param key of the skill
+     * @param item Material/ItemID of the skill item
+     * @param value BackstabValue
+     * @param msg1 attackerMsg
+     * @param msg2 victimMsg
+     * @param msg3 critMsg
      */
     @Deprecated
     public BackStab(WayOfShadows instance, String key, String item, BackstabItem value, String msg1, String msg2, String msg3)

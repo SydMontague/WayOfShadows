@@ -85,6 +85,9 @@ public abstract class Skill implements Listener
     
     /**
      * Constructor for pre 0.5 Updater
+     * @param instance plugin instance 
+     * @param key of the kill
+     * @param item Material/ItemID of skill item
      */
     @Deprecated
     public Skill(WayOfShadows instance, String key, String item)

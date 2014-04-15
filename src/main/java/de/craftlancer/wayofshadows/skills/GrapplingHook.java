@@ -76,6 +76,17 @@ public class GrapplingHook extends Skill
     
     /**
      * Constructor for pre 0.5 Updater
+     * @param instance plugin instance
+     * @param key of the skill
+     * @param hook itemId of hookItem
+     * @param pull itemId of pullItem
+     * @param bTime lifetime of the block
+     * @param maxDist maxDistance to arrow
+     * @param initDistance maxDistance to initial location
+     * @param ipb pullitem usage per block
+     * @param string errorMsg
+     * @param string2 initialMsg
+     * @param string3 distanceMsg
      */
     @Deprecated
     public GrapplingHook(WayOfShadows instance, String key, int hook, int pull, long bTime, int maxDist, int initDistance, double ipb, String string, String string2, String string3)
