@@ -25,6 +25,7 @@ import de.craftlancer.wayofshadows.event.ShadowPickPocketEndEvent;
 import de.craftlancer.wayofshadows.event.ShadowPickPocketEvent;
 import de.craftlancer.wayofshadows.event.ShadowPickPocketFailEvent;
 import de.craftlancer.wayofshadows.utils.PickPocketCheckTask;
+import de.craftlancer.wayofshadows.utils.SkillType;
 import de.craftlancer.wayofshadows.utils.Utils;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
@@ -230,7 +231,6 @@ public class PickPocket extends Skill
     {
         super.save(config);
         
-        config.set(getName() + ".type", "pickpocket");
         config.set(getName() + ".chance", chance.getInput());
         config.set(getName() + ".maxValue", maxValue.getInput());
         config.set(getName() + ".maxAngle", maxAngle.getInput());
@@ -244,8 +244,8 @@ public class PickPocket extends Skill
     }
     
     @Override
-    public String getType()
+    public SkillType getType()
     {
-        return "pickpocket";
+        return SkillType.PICKPOCKET;
     }
 }

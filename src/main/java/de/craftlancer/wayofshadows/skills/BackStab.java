@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.event.ShadowBackStabEvent;
 import de.craftlancer.wayofshadows.updater.BackstabItem;
+import de.craftlancer.wayofshadows.utils.SkillType;
 import de.craftlancer.wayofshadows.utils.Utils;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
@@ -145,7 +146,6 @@ public class BackStab extends Skill
     public void save(FileConfiguration config)
     {
         super.save(config);
-        config.set(getName() + ".type", "backstab");
         config.set(getName() + ".chance", chance.getInput());
         config.set(getName() + ".critChance", critChance.getInput());
         config.set(getName() + ".multiplier", multiplier.getInput());
@@ -161,8 +161,8 @@ public class BackStab extends Skill
     }
     
     @Override
-    public String getType()
+    public SkillType getType()
     {
-        return "backstab";
+        return SkillType.BACKSTAB;
     }
 }

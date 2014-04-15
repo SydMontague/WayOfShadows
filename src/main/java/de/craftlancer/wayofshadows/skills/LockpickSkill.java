@@ -19,8 +19,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.event.ShadowLockpickEvent;
+import de.craftlancer.wayofshadows.utils.SkillType;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
+//TODO MISSING SAVE
 public class LockpickSkill extends Skill
 {
     private boolean loseItemOnFail;
@@ -188,9 +190,29 @@ public class LockpickSkill extends Skill
     }
     
     @Override
-    public String getType()
+    public SkillType getType()
     {
-        return "lockpick";
+        return SkillType.LOCKPICK;
+    }
+    
+    @Override
+    public void save(FileConfiguration config)
+    {
+        super.save(config);
+        
+        config.set(getName() + ".loseItemOnFail", loseItemOnFail);
+        config.set(getName() + ".loseItemOnSuccess", loseItemOnSuccess);
+        config.set(getName() + ".chance", chance);
+        config.set(getName() + ".damageOnFail", damageOnFail);
+        config.set(getName() + ".closeCooldown", closeCooldown);
+        
+        for (Entry<Material, ValueWrapper> entry : pickMod.entrySet())
+            config.set(getName() + ".pickable." + entry.getKey().name(), entry.getValue().getInput());
+        
+        config.set(getName() + ".successMsg", successMsg);
+        config.set(getName() + ".failMsg", failMsg);
+        config.set(getName() + ".closeCooldownMsg", closeCooldownMsg);
+        config.set(getName() + ".sneakMsg", sneakMsg);
     }
 }
 

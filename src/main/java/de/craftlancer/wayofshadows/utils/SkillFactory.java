@@ -3,6 +3,7 @@ package de.craftlancer.wayofshadows.utils;
 import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.skills.AirAssassination;
 import de.craftlancer.wayofshadows.skills.BackStab;
+import de.craftlancer.wayofshadows.skills.ChestThief;
 import de.craftlancer.wayofshadows.skills.EffectSkill;
 import de.craftlancer.wayofshadows.skills.GrapplingHook;
 import de.craftlancer.wayofshadows.skills.LockpickSkill;
@@ -15,8 +16,10 @@ public class SkillFactory
      * Creates a new Skill instance based of the "type" value given in the
      * config
      * 
-     * @param key - the key of the skill in config
-     * @param plugin - the instance of the plugin, this skill is created for
+     * @param key
+     *            - the key of the skill in config
+     * @param plugin
+     *            - the instance of the plugin, this skill is created for
      * @return a Skill object
      */
     public static Skill createSkill(String key, WayOfShadows plugin)
@@ -27,22 +30,28 @@ public class SkillFactory
             return null;
         }
         
-        String type = plugin.getConfig().getString(key + ".type");
+        SkillType type = SkillType.matchType(plugin.getConfig().getString(key + ".type"));
         
-        if (type.equalsIgnoreCase("backstab"))
-            return new BackStab(plugin, key);
-        else if (type.equalsIgnoreCase("effect"))
-            return new EffectSkill(plugin, key);
-        else if (type.equalsIgnoreCase("grapplinghook"))
-            return new GrapplingHook(plugin, key);
-        else if (type.equalsIgnoreCase("pickpocket"))
-            return new PickPocket(plugin, key);
-        else if (type.equalsIgnoreCase("airassassination"))
-            return new AirAssassination(plugin, key);
-        else if (type.equalsIgnoreCase("lockpick"))
-            return new LockpickSkill(plugin, key);
+        switch (type)
+        {
+            case AIRASSASSINATION:
+                return new AirAssassination(plugin, key);
+            case BACKSTAB:
+                return new BackStab(plugin, key);
+            case CHESTTHIEF:
+                return new ChestThief(plugin, key);
+            case EFFECT:
+                return new EffectSkill(plugin, key);
+            case GRAPPLINGHOOK:
+                return new GrapplingHook(plugin, key);
+            case LOCKPICK:
+                return new LockpickSkill(plugin, key);
+            case PICKPOCKET:
+                return new PickPocket(plugin, key);
+            default:
+                plugin.error("Wrong 'type' node in Skill \"" + key + "\"! Valid types are 'backstab', 'effect', 'grapplinghook', 'pickpocket', 'airassassination' and 'lockpick'.");
+        }
         
-        plugin.error("Wrong 'type' node in Skill \"" + key + "\"! Valid types are 'backstab', 'effect', 'grapplinghook', 'pickpocket', 'airassassination' and 'lockpick'.");
         return null;
     }
 }

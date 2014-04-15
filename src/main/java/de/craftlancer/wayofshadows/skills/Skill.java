@@ -14,6 +14,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
 import de.craftlancer.wayofshadows.WayOfShadows;
+import de.craftlancer.wayofshadows.utils.SkillType;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
 /**
@@ -292,6 +293,7 @@ public abstract class Skill implements Listener
         for (Material m : items)
             mat.add(m.name());
         
+        config.set(getName() + ".type", getType().getName());
         config.set(getName() + ".lore", lore);
         config.set(getName() + ".items", mat);
         config.set(getName() + ".itemNames", itemNames);
@@ -303,5 +305,5 @@ public abstract class Skill implements Listener
      * 
      * @return the type of the skill as String
      */
-    public abstract String getType();
+    public abstract SkillType getType();
 }

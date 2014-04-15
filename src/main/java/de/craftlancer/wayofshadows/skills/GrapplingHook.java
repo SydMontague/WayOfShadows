@@ -24,6 +24,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.event.ShadowPullEvent;
+import de.craftlancer.wayofshadows.utils.SkillType;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
 /**
@@ -295,7 +296,6 @@ public class GrapplingHook extends Skill
         for (Material m : pullItems)
             mat.add(m.name());
         
-        config.set(getName() + ".type", "grapplinghook");
         config.set(getName() + ".pullLore", pullLore);
         config.set(getName() + ".pullItems", mat);
         config.set(getName() + ".pullItemNames", pullItemNames);
@@ -312,8 +312,8 @@ public class GrapplingHook extends Skill
     }
     
     @Override
-    public String getType()
+    public SkillType getType()
     {
-        return "grapplinghook";
+        return SkillType.GRAPPLINGHOOK;
     }
 }

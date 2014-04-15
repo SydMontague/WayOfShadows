@@ -16,6 +16,7 @@ import org.bukkit.potion.PotionEffectType;
 import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.event.ShadowEffectSkillEvent;
 import de.craftlancer.wayofshadows.updater.ItemEffect;
+import de.craftlancer.wayofshadows.utils.SkillType;
 import de.craftlancer.wayofshadows.utils.Utils;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
@@ -129,7 +130,6 @@ public class EffectSkill extends Skill
     {
         super.save(config);
         
-        config.set(getName() + ".type", "effect");
         config.set(getName() + ".effectType", type.getName());
         config.set(getName() + ".chance", chance.getInput());
         config.set(getName() + ".maxAngle", maxAngle.getInput());
@@ -139,9 +139,9 @@ public class EffectSkill extends Skill
     }
     
     @Override
-    public String getType()
+    public SkillType getType()
     {
-        return "effect";
+        return SkillType.EFFECT;
     }
     
 }

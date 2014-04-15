@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.event.ShadowAirAssassinEvent;
+import de.craftlancer.wayofshadows.utils.SkillType;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
 /**
@@ -102,7 +103,6 @@ public class AirAssassination extends Skill
     {
         super.save(config);
         
-        config.set(getName() + ".type", "airassassination");
         config.set(getName() + ".chance", chance.getInput());
         config.set(getName() + ".minHeight", minHeight.getInput());
         config.set(getName() + ".maxHeight", maxHeight.getInput());
@@ -114,8 +114,8 @@ public class AirAssassination extends Skill
     }
     
     @Override
-    public String getType()
+    public SkillType getType()
     {
-        return "airassassination";
+        return SkillType.AIRASSASSINATION;
     }
 }
