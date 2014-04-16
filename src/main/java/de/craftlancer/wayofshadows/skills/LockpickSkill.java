@@ -22,7 +22,6 @@ import de.craftlancer.wayofshadows.event.ShadowLockpickEvent;
 import de.craftlancer.wayofshadows.utils.SkillType;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
-//TODO MISSING SAVE
 public class LockpickSkill extends Skill
 {
     private boolean loseItemOnFail;
