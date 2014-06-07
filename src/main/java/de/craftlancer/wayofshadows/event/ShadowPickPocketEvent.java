@@ -2,9 +2,10 @@ package de.craftlancer.wayofshadows.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import de.craftlancer.wayofshadows.skills.PickPocket;
+import de.craftlancer.wayofshadows.skills.ThiefSkill;
 
 /**
  * Called when a player performs a pickpocket
@@ -12,10 +13,10 @@ import de.craftlancer.wayofshadows.skills.PickPocket;
 public class ShadowPickPocketEvent extends ShadowEvent
 {
     private static final HandlerList handlers = new HandlerList();
-    private Player victim;
+    private Inventory victim;
     private ItemStack item;
     
-    public ShadowPickPocketEvent(Player player, PickPocket skill, Player victim, ItemStack item)
+    public ShadowPickPocketEvent(Player player, ThiefSkill skill, Inventory victim, ItemStack item)
     {
         super(player, skill);
         this.victim = victim;
@@ -27,7 +28,7 @@ public class ShadowPickPocketEvent extends ShadowEvent
      * 
      * @return the robbed Player
      */
-    public Player getVictim()
+    public Inventory getVictim()
     {
         return victim;
     }
@@ -43,9 +44,9 @@ public class ShadowPickPocketEvent extends ShadowEvent
     }
     
     @Override
-    public PickPocket getSkill()
+    public ThiefSkill getSkill()
     {
-        return (PickPocket) super.getSkill();
+        return (ThiefSkill) super.getSkill();
     }
     
     @Override

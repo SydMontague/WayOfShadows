@@ -32,14 +32,14 @@ public class PickPocketCheckTask extends BukkitRunnable
         if (!p1.getLocation().getWorld().equals(p2.getLocation().getWorld()) || p1.getLocation().distance(p2.getLocation()) > skill.getMaxDistance().getValue(level))
         {
             p1.closeInventory();
-            Bukkit.getPluginManager().callEvent(new ShadowPickPocketEndEvent(p1, skill, p2, EndReason.DISTANCE));
+            Bukkit.getPluginManager().callEvent(new ShadowPickPocketEndEvent(p1, skill, p2.getInventory(), EndReason.DISTANCE));
             cancel();
         }
         
         if (Utils.getAngle(p1.getLocation().getDirection(), p2.getLocation().getDirection()) > skill.getMaxAngle().getValue(level))
         {
             p1.closeInventory();
-            Bukkit.getPluginManager().callEvent(new ShadowPickPocketEndEvent(p1, skill, p2, EndReason.ANGLE));
+            Bukkit.getPluginManager().callEvent(new ShadowPickPocketEndEvent(p1, skill, p2.getInventory(), EndReason.ANGLE));
             cancel();
         }
     }

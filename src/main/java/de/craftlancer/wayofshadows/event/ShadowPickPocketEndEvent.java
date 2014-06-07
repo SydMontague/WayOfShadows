@@ -2,9 +2,10 @@ package de.craftlancer.wayofshadows.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.Inventory;
 
-import de.craftlancer.wayofshadows.skills.PickPocket;
 import de.craftlancer.wayofshadows.skills.Skill;
+import de.craftlancer.wayofshadows.skills.ThiefSkill;
 
 /**
  * Gets called when a pickpocket comes to it's end,
@@ -12,10 +13,10 @@ import de.craftlancer.wayofshadows.skills.Skill;
 public class ShadowPickPocketEndEvent extends ShadowEvent
 {
     private static final HandlerList handlers = new HandlerList();
-    private Player victim;
+    private Inventory victim;
     private EndReason reason;
     
-    public ShadowPickPocketEndEvent(Player player, Skill skill, Player victim, EndReason reason)
+    public ShadowPickPocketEndEvent(Player player, Skill skill, Inventory victim, EndReason reason)
     {
         super(player, skill);
         this.victim = victim;
@@ -23,9 +24,9 @@ public class ShadowPickPocketEndEvent extends ShadowEvent
     }
     
     @Override
-    public PickPocket getSkill()
+    public ThiefSkill getSkill()
     {
-        return (PickPocket) super.getSkill();
+        return (ThiefSkill) super.getSkill();
     }
     
     /**
@@ -33,7 +34,7 @@ public class ShadowPickPocketEndEvent extends ShadowEvent
      * 
      * @return the robbed Player
      */
-    public Player getVictim()
+    public Inventory getVictim()
     {
         return victim;
     }
