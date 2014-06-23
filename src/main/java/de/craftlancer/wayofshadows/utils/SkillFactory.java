@@ -7,6 +7,7 @@ import de.craftlancer.wayofshadows.skills.ChestThief;
 import de.craftlancer.wayofshadows.skills.EffectSkill;
 import de.craftlancer.wayofshadows.skills.GrapplingHook;
 import de.craftlancer.wayofshadows.skills.LockpickSkill;
+import de.craftlancer.wayofshadows.skills.NewLockpickSkill;
 import de.craftlancer.wayofshadows.skills.PickPocket;
 import de.craftlancer.wayofshadows.skills.Skill;
 
@@ -48,8 +49,10 @@ public class SkillFactory
                 return new LockpickSkill(plugin, key);
             case PICKPOCKET:
                 return new PickPocket(plugin, key);
+            case NEWLOCKPICK:
+                return new NewLockpickSkill(plugin, key);
             default:
-                plugin.error("Wrong 'type' node in Skill \"" + key + "\"! Valid types are 'backstab', 'effect', 'grapplinghook', 'pickpocket', 'airassassination' and 'lockpick'.");
+                plugin.error("Wrong 'type' node in Skill \"" + key + "\"! Valid types are 'backstab', 'effect', 'grapplinghook', 'pickpocket', 'airassassination', 'lockpick' and 'newlockpick'.");
         }
         
         return null;
