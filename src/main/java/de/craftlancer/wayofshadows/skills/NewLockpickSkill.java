@@ -62,11 +62,11 @@ public class NewLockpickSkill extends Skill
         }
         
         useFalseOnFail = instance.getConfig().getBoolean(key + ".useFalseOnFail", true);
-        usePositionOnFail = instance.getConfig().getBoolean(key + ".usePositionOnFail", true);
-        useTrueOnFalse = instance.getConfig().getBoolean(key + ".useTrueOnFalse", true);
-        useOnSuccess = instance.getConfig().getBoolean(key + ".useOnSuccess", true);
+        usePositionOnFail = instance.getConfig().getBoolean(key + ".usePositionOnFail", false);
+        useTrueOnFalse = instance.getConfig().getBoolean(key + ".useTrueOnFalse", false);
+        useOnSuccess = instance.getConfig().getBoolean(key + ".useOnSuccess", false);
         
-        closeCooldown = new ValueWrapper(instance.getConfig().getString(key + ".closeCooldown"));
+        closeCooldown = new ValueWrapper(instance.getConfig().getString(key + ".closeCooldown", "0"));
         closeCooldownMsg = instance.getConfig().getString(key + ".closeCooldownMsg", "You can't close this for another %time% seconds!");
         
         if (instance.getConfig().getConfigurationSection(key + ".pickable") != null)

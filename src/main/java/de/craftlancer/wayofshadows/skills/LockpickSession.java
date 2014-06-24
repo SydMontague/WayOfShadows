@@ -120,18 +120,19 @@ public class LockpickSession
                 {
                     case FALSE:
                         if (!skill.isUseOnFalse())
-                            break;
+                            continue;
+                        break;
                     case POSITION:
                         if (!skill.isUseOnPosition())
-                            break;
+                            continue;
+                        break;
                     case TRUE:
                         if (!skill.isUseOnTrue())
-                            break;
-                    default:
-                        inventory.setItem(i, null);
+                            continue;
+                        break;
                 }
+                inventory.setItem(i, null);
             }
-            
             return;
         }
         
