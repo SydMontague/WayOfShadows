@@ -7,47 +7,77 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import de.craftlancer.wayofshadows.WayOfShadows;
-import de.craftlancer.wayofshadows.skills.NewLockpickSkill.PickResult;
-import de.craftlancer.wayofshadows.skills.NewLockpickSkill.Solution;
 import de.craftlancer.wayofshadows.utils.SkillType;
+import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
 public class NewLockpickSkill extends Skill
 {
     private final Random rand = new Random();
-    private List<Material> materials;
+    private final List<Material> materials = new ArrayList<Material>();
     
-    private Map<Material, Integer> matToSize = new HashMap<Material, Integer>();
+    private final boolean useFalseOnFail;
+    private final boolean usePositionOnFail;
+    private final boolean useTrueOnFalse;
+    private final boolean useOnSuccess;
+    
+    private final ValueWrapper closeCooldown;
+    
+    private final String closeCooldownMsg;
+    
+    private final Map<Material, ValueWrapper> matToSize = new HashMap<Material, ValueWrapper>();
+    
     private Map<UUID, LockpickSession> sessions = new HashMap<UUID, LockpickSession>();
-    
     private Map<Location, Solution> solutionMap = new HashMap<Location, Solution>();
+    
+    private Map<Block, Long> closeMap = new HashMap<Block, Long>();
     
     public NewLockpickSkill(WayOfShadows instance, String key)
     {
         super(instance, key);
-        materials = new ArrayList<Material>();
-        materials.add(Material.IRON_INGOT);
-        materials.add(Material.GOLD_INGOT);
-        materials.add(Material.REDSTONE);
         
-        matToSize.put(Material.WOODEN_DOOR, 4);
-        matToSize.put(Material.CHEST, 4);
-        matToSize.put(Material.FURNACE, 7);
-        // TODO Auto-generated constructor stub
+        for (String s : instance.getConfig().getStringList(key + ".materials"))
+        {
+            Material mat = Material.matchMaterial(s);
+            
+            if (mat == null)
+                instance.getLogger().warning("An item is not a valid Material: " + s);
+            else
+                materials.add(mat);
+        }
+        
+        useFalseOnFail = instance.getConfig().getBoolean(key + ".useFalseOnFail", true);
+        usePositionOnFail = instance.getConfig().getBoolean(key + ".usePositionOnFail", true);
+        useTrueOnFalse = instance.getConfig().getBoolean(key + ".useTrueOnFalse", true);
+        useOnSuccess = instance.getConfig().getBoolean(key + ".useOnSuccess", true);
+        
+        closeCooldown = new ValueWrapper(instance.getConfig().getString(key + ".closeCooldown"));
+        closeCooldownMsg = instance.getConfig().getString(key + ".closeCooldownMsg", "You can't close this for another %time% seconds!");
+        
+        if (instance.getConfig().getConfigurationSection(key + ".pickable") != null)
+            for (String s : instance.getConfig().getConfigurationSection(key + ".pickable").getKeys(false))
+            {
+                Material mat = Material.getMaterial(s);
+                if (mat == null)
+                    continue;
+                
+                matToSize.put(mat, new ValueWrapper(instance.getConfig().getString(key + ".pickable." + s)));
+            }
     }
     
     @Override
@@ -61,16 +91,24 @@ public class NewLockpickSkill extends Skill
     {
         if (!e.hasBlock() || !e.isCancelled() || e.getAction() != Action.RIGHT_CLICK_BLOCK || !matToSize.containsKey(e.getClickedBlock().getType()))
             return;
-
+        
         ItemStack item = e.getItem();
         Player p = e.getPlayer();
         
         if (!isSkillItem(item) || !hasPermission(p, item))
             return;
-
+        
+        if (isOnCooldown(p))
+        {
+            p.sendMessage(getCooldownMsg(p));
+            return;
+        }
+        
+        int level = plugin.getLevel(p, getLevelSys());
+        
         if (!solutionMap.containsKey(e.getClickedBlock().getLocation()))
-            solutionMap.put(e.getClickedBlock().getLocation(), new Solution(matToSize.get(e.getClickedBlock().getType())));
-
+            solutionMap.put(e.getClickedBlock().getLocation(), new Solution(matToSize.get(e.getClickedBlock().getType()).getIntValue(level)));
+        
         sessions.put(e.getPlayer().getUniqueId(), new LockpickSession(this, e.getPlayer(), solutionMap.get(e.getClickedBlock().getLocation()), e.getClickedBlock()));
     }
     
@@ -92,7 +130,72 @@ public class NewLockpickSkill extends Skill
     public void onInventoryClose(InventoryCloseEvent event)
     {
         if (sessions.containsKey(event.getPlayer().getUniqueId()))
-            sessions.remove(event.getPlayer().getUniqueId());
+            sessions.remove(event.getPlayer().getUniqueId()).handleInventoryClose(event);
+    }
+    
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onDoorInteract(PlayerInteractEvent e)
+    {
+        if (!e.hasBlock())
+            return;
+        
+        switch (e.getClickedBlock().getType())
+        {
+            case WOODEN_DOOR:
+            case TRAP_DOOR:
+            case FENCE_GATE:
+            case LEVER:
+                break;
+            default:
+                return;
+        }
+        
+        if (!closeMap.containsKey(e.getClickedBlock()))
+            return;
+        
+        long time = closeMap.get(e.getClickedBlock());
+        time = time - System.currentTimeMillis();
+        
+        if (time <= 0)
+        {
+            closeMap.remove(e.getClickedBlock());
+            return;
+        }
+        
+        e.setCancelled(true);
+        e.getPlayer().sendMessage(closeCooldownMsg.replace("%time%", String.valueOf(time / 1000)));
+    }
+    
+    public boolean isUseOnFalse()
+    {
+        return useFalseOnFail;
+    }
+    
+    public boolean isUseOnPosition()
+    {
+        return usePositionOnFail;
+    }
+    
+    public boolean isUseOnTrue()
+    {
+        return useTrueOnFalse;
+    }
+    
+    public boolean useOnSuccess()
+    {
+        return useOnSuccess;
+    }
+    
+    public void removeSolution(Location location)
+    {
+        solutionMap.remove(location);
+    }
+    
+    public void addToCloseMap(Player player, Block block)
+    {
+        int level = plugin.getLevel(player, getLevelSys());
+        
+        closeMap.put(block, System.currentTimeMillis() + (long) closeCooldown.getValue(level) * 1000);
     }
     
     class Solution
@@ -176,98 +279,29 @@ public class NewLockpickSkill extends Skill
     
     enum PickResult
     {
-        TRUE(DyeColor.GREEN),
-        POSITION(DyeColor.YELLOW), 
-        FALSE(DyeColor.WHITE);
-
-        private DyeColor color;
+        TRUE(DyeColor.GREEN, ChatColor.GREEN),
+        POSITION(DyeColor.YELLOW, ChatColor.YELLOW),
+        FALSE(DyeColor.WHITE, ChatColor.WHITE);
         
-        private PickResult(DyeColor color)
+        private DyeColor color;
+        private ChatColor chatColor;
+        
+        private PickResult(DyeColor color, ChatColor chatColor)
         {
             this.color = color;
+            this.chatColor = chatColor;
         }
         
+        @SuppressWarnings("deprecation")
         public ItemStack getWoolItem()
         {
             ItemStack item = new ItemStack(Material.WOOL);
+            ItemMeta meta = item.getItemMeta();
+            meta.setDisplayName(chatColor + name());
+            item.setItemMeta(meta);
             item.setDurability(color.getWoolData());
             
             return item;
         }
-    }
-}
-
-class LockpickSession
-{
-    private NewLockpickSkill skill;
-    private Solution solution;
-    private Inventory inventory;
-    
-    public LockpickSession(NewLockpickSkill skill, Player player, Solution solution, Block block)
-    {
-        this.skill = skill;
-        this.solution = solution;
-        this.inventory = Bukkit.createInventory(null, 27, "Lockpick");
-        
-        /*
-         * 0000000##
-         * #########
-         * 0000000#B
-         */
-        
-        for (int i = 0; i < 27; i++)
-        {
-            if (i < solution.getSize())
-                continue;
-            
-            if (i >= 18 && i - 18 < solution.getSize())
-                inventory.setItem(i, new ItemStack(Material.WOOL));
-            else if (i == 26)
-                inventory.setItem(i, new ItemStack(Material.SLIME_BALL));
-            else
-                inventory.setItem(i, new ItemStack(Material.IRON_FENCE));
-        }
-        
-        inventory.setMaxStackSize(1);
-        player.openInventory(getInventory());
-    }
-    
-    public void handleInventoryInteract(InventoryClickEvent event)
-    {
-        if(!event.getInventory().equals(getInventory()))
-            return;
-        
-        if(event.getRawSlot() == 26)
-            execute();
-        
-        if(event.getRawSlot() >= solution.getSize() && event.getRawSlot() < 27)
-            event.setCancelled(true);
-        else
-        {
-            
-        }
-    }
-    
-    private void execute()
-    {
-        Material[] input = new Material[solution.getSize()];
-        
-        for(int i = 0; i < solution.getSize(); i++)
-        {
-            ItemStack item = inventory.getItem(i);
-            input[i] = item != null ? item.getType() : Material.AIR;
-        }
-        
-        PickResult[] result = solution.getPickResult(input);
-        
-        for(int i = 0; i < solution.getSize(); i++)
-            inventory.setItem(i + 18, result[i].getWoolItem());
-        
-        
-    }
-    
-    public Inventory getInventory()
-    {
-        return inventory;
     }
 }
