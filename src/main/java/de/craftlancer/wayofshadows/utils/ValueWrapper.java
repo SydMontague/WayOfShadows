@@ -66,6 +66,14 @@ public class ValueWrapper
             return Double.valueOf(getMathResult(input, level, int2));
     }
     
+    public double getValue(int level, long int2)
+    {
+        if (value != null)
+            return value;
+        else
+            return Double.valueOf(getMathResult(input, level, int2));
+    }
+    
     public double getValue(int level, double value2)
     {
         if (value != null)
