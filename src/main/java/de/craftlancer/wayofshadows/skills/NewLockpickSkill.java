@@ -86,6 +86,16 @@ public class NewLockpickSkill extends Skill
         return SkillType.NEWLOCKPICK;
     }
     
+    public Random getRandom()
+    {
+        return rand;
+    }
+    
+    public List<Material> getMaterials()
+    {
+        return materials;
+    }
+    
     @EventHandler
     public void onInteract(PlayerInteractEvent e)
     {
@@ -207,7 +217,7 @@ public class NewLockpickSkill extends Skill
             mats = new Material[size];
             
             for (int i = 0; i < size; i++)
-                mats[i] = materials.get(rand.nextInt(materials.size()));
+                mats[i] = getMaterials().get(getRandom().nextInt(getMaterials().size()));
         }
         
         public int getSize()

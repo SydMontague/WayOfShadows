@@ -213,7 +213,7 @@ public class LockpickSession
                 inventory.setItem(i, null);
     }
     
-    private boolean isCorrect(PickResult[] result)
+    private static boolean isCorrect(PickResult[] result)
     {
         for (PickResult r : result)
             if (r != PickResult.TRUE)

@@ -9,7 +9,8 @@ public enum SkillType
     GRAPPLINGHOOK,
     LOCKPICK,
     PICKPOCKET, 
-    NEWLOCKPICK;
+    NEWLOCKPICK, 
+    SHADOWLEAP;
     
     public String getName()
     {
