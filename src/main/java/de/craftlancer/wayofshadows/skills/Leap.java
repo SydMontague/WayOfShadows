@@ -41,7 +41,6 @@ public class Leap extends Skill
         damage = new ValueWrapper(config.getString(key + ".damage", "0.5*y"));
     }
     
-    //TODO sound
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onPlayerInteract(PlayerInteractEvent event)
     {
@@ -70,11 +69,16 @@ public class Leap extends Skill
         vec.add(new Vector(0,0.5,0));
 
         int level = plugin.getLevel(p, getLevelSys());
+        
         loc.getWorld().playEffect(p.getLocation(), Effect.ENDER_SIGNAL, 0);
         loc.getWorld().playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1, 1);
+        
         p.teleport(loc.add(vec), TeleportCause.PLUGIN);
+        
         victim.damage(damage.getValue(level, Utils.getWeaponDamage(item)), p);
+        
         loc.getWorld().playEffect(p.getLocation(), Effect.ENDER_SIGNAL, 0);
+        
         setOnCooldown(p);
     }
     

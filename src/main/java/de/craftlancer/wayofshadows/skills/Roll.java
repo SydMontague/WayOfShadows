@@ -24,13 +24,13 @@ public class Roll extends Skill
     {
         super(instance, key);
         FileConfiguration config = instance.getConfig();
-        damageMod = new ValueWrapper(config.getString(key + ".damageMod", "y/20"));
+        damageMod = new ValueWrapper(config.getString(key + ".damageMod", "y/5+0.2"));
     }
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void toggleSneak(PlayerToggleSneakEvent event)
     {
-        if (!event.getPlayer().isSneaking() || event.getPlayer().getFallDistance() == 0)
+        if (event.getPlayer().isSneaking() || event.getPlayer().getFallDistance() == 0)
             return;
         
         event.getPlayer().setMetadata("shadow." + getName() + ".sneaktime", new FixedMetadataValue(plugin, event.getPlayer().getWorld().getFullTime()));
@@ -52,7 +52,7 @@ public class Roll extends Skill
         long delta = entity.getWorld().getFullTime() - entity.getMetadata("shadow." + getName() + ".sneaktime").get(0).asLong();
         double mod = damageMod.getValue(level, delta);
         
-        if(mod >= 1)
+        if(mod >= 1 || mod < 0)
             return;
 
         event.setDamage(mod * event.getDamage());
