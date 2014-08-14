@@ -2,7 +2,6 @@ package de.craftlancer.wayofshadows.skills;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -33,7 +32,6 @@ public class Leap extends Skill
     public Leap(WayOfShadows instance, String key)
     {
         super(instance, key);
-        Bukkit.getLogger().info("instance created");
         FileConfiguration config = instance.getConfig();
         maxAngle = new ValueWrapper(config.getString(key + ".maxAngle", "10"));
         maxDistance = new ValueWrapper(config.getString(key + ".maxDistance", "5"));

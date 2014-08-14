@@ -11,7 +11,8 @@ public enum SkillType
     PICKPOCKET, 
     NEWLOCKPICK, 
     SHADOWLEAP, 
-    ROLL;
+    ROLL, 
+    COUNTER;
     
     public String getName()
     {
