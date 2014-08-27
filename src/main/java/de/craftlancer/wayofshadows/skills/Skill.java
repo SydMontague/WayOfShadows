@@ -228,6 +228,9 @@ public abstract class Skill implements Listener
      */
     public boolean hasPermission(Player p, ItemStack item)
     {
+        if(item == null)
+            item = new ItemStack(Material.AIR);
+        
         if (p.hasPermission("shadow." + getName()))
             return true;
         
