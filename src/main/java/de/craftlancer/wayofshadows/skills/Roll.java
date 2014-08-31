@@ -15,7 +15,7 @@ import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.utils.SkillType;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
-//TODO test it!
+//TODO add events, cooldown and items
 public class Roll extends Skill
 {
     private ValueWrapper damageMod; // x = level, y = ticks between sneak and damage event

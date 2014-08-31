@@ -22,6 +22,7 @@ import de.craftlancer.wayofshadows.utils.SkillType;
 import de.craftlancer.wayofshadows.utils.Utils;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
+//TODO add events
 public class Leap extends Skill
 {
     private ValueWrapper maxDistance;

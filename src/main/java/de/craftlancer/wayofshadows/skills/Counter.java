@@ -10,13 +10,14 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import de.craftlancer.wayofshadows.WayOfShadows;
 import de.craftlancer.wayofshadows.utils.SkillType;
 import de.craftlancer.wayofshadows.utils.ValueWrapper;
 
-
 //TODO test
+//TODO add events
 public class Counter extends Skill
 {
     private ValueWrapper maxTime;
@@ -32,34 +33,45 @@ public class Counter extends Skill
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onBlock(PlayerInteractEvent event)
+    public void onBlock(final PlayerInteractEvent event)
     {
-        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
-            return;
-        
-        Player player = event.getPlayer();
-        ItemStack item = player.getItemInHand();
-        
-        if (!player.isBlocking())
-            return;
-        
-        if (!isSkillItem(item) || !hasPermission(player, item))
-            return;
-        
-        if (isOnCooldown(player))
-            return;
-        
-        player.setMetadata("shadow." + getName() + ".blockTime", new FixedMetadataValue(plugin, event.getPlayer().getWorld().getFullTime()));
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
+                    return;
+                
+                Player player = event.getPlayer();
+                ItemStack item = player.getItemInHand();
+                
+                if (!player.isBlocking())
+                    return;
+                
+                if (!isSkillItem(item) || !hasPermission(player, item))
+                    return;
+                
+                if (isOnCooldown(player))
+                    return;
+                
+                player.removeMetadata("shadow." + getName() + ".counterTime", plugin);
+                player.setMetadata("shadow." + getName() + ".blockTime", new FixedMetadataValue(plugin, event.getPlayer().getWorld().getFullTime()));
+            }
+        }.runTaskLater(plugin, 0);
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onDamage(EntityDamageByEntityEvent event)
     {
         if (event.getEntityType() == EntityType.PLAYER)
         {
             Player player = (Player) event.getEntity();
             if (player.hasMetadata("shadow." + getName() + ".blockTime") && player.isBlocking())
+            {
                 player.setMetadata("shadow." + getName() + ".counterTime", new FixedMetadataValue(plugin, player.getWorld().getFullTime()));
+                player.sendMessage("Counter chance!");
+            }
         }
         
         if (event.getDamager().getType() != EntityType.PLAYER)
@@ -79,10 +91,11 @@ public class Counter extends Skill
         double damageMod = damage.getValue(level, delta);
         
         if (multi)
-            event.setDamage(DamageModifier.BASE, event.getDamage(DamageModifier.BASE) * damageMod);
+            event.setDamage(event.getDamage(DamageModifier.BASE) * damageMod);
         else
-            event.setDamage(DamageModifier.BASE, event.getDamage(DamageModifier.BASE) + damageMod);
+            event.setDamage(event.getDamage(DamageModifier.BASE) + damageMod);
         
+        player.sendMessage("Counter!");
         player.removeMetadata("shadow." + getName() + ".counterTime", plugin);
         player.removeMetadata("shadow." + getName() + ".blockTime", plugin);
     }
