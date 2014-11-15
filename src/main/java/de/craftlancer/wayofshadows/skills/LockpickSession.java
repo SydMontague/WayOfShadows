@@ -135,9 +135,7 @@ public class LockpickSession
             }
             return;
         }
-        
-        player.closeInventory();
-        
+                
         BlockState state = block.getState();
         
         switch (block.getType())
@@ -211,6 +209,8 @@ public class LockpickSession
         if (skill.useOnSuccess())
             for (int i = 0; i < result.length; i++)
                 inventory.setItem(i, null);
+
+        player.closeInventory();
     }
     
     private static boolean isCorrect(PickResult[] result)
