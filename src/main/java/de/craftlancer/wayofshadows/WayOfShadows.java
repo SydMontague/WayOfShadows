@@ -81,16 +81,9 @@ public class WayOfShadows extends JavaPlugin
         
         skills.clear();
         valCatalogue.clear();
-        
-        reloadConfig();
-        
-        if (!new File(getDataFolder(), "config.yml").exists())
-            saveDefaultConfig();
-        
+                
         if (!new File(getDataFolder(), "values.yml").exists())
             saveResource("values.yml", false);
-        
-        reloadConfig();
         
         valueConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "values.yml"));
         config = getConfig();
@@ -110,7 +103,7 @@ public class WayOfShadows extends JavaPlugin
             if (s == null)
                 continue;
             skills.add(s);
-            Bukkit.getPluginManager().registerEvents(s, this);
+            getServer().getPluginManager().registerEvents(s, this);
         }
         
         if (config.getInt("configVersion") == 1)
@@ -123,6 +116,7 @@ public class WayOfShadows extends JavaPlugin
     {
         if (!(sender instanceof Player) || sender.hasPermission("shadow.reload"))
         {
+            reloadConfig();
             loadSkills();
             sender.sendMessage(ChatColor.AQUA + "[WayOfShadows] successfully reloaded!");
         }

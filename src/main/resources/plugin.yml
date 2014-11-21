@@ -5,21 +5,6 @@ version: ${project.version}
 description: Effect, BackStab, GrapplingHook, AirAssassionation and PickPocket skills
 softdepend: [SkillLevels]
 permissions:
-  shadow.<skillname>:    
-    description: Allows you to use the skill with all valid items
-    default: false
-  shadow.<skillname>.item.<id>:    
-    description: Allows you to use the skill with items with id <id>.
-    default: false
-  shadow.<skillname>.name.<name>:    
-    description: Allows you to use the skill with items with name <name>.
-    default: false
-  shadow.<skillname>.lore.<lore>:    
-    description: Allows you to use the skill with items which lore contains the String <lore>.
-    default: false
-  shadow.<pickpocketskill>.exempt:
-    description: Players with this permissions are immune against this pickpocket skill
-    default: false
   shadow.reload:
     description: Allows to use the /wayofshadows command, which reloads the plugin's config and skills
     default: op

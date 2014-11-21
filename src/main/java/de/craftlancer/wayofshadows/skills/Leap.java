@@ -72,7 +72,11 @@ public class Leap extends Skill
         loc.getWorld().playEffect(p.getLocation(), Effect.ENDER_SIGNAL, 0);
         loc.getWorld().playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1, 1);
         
-        p.teleport(loc.add(vec), TeleportCause.PLUGIN);
+        Location target = loc.add(vec);
+        while(target.getBlock().getType().isSolid())
+            target = target.add(0, 1, 0);
+        
+        p.teleport(target, TeleportCause.PLUGIN);
         
         victim.damage(damage.getValue(level, Utils.getWeaponDamage(item)), p);
         

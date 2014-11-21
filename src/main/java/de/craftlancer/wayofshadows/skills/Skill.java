@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -86,7 +87,8 @@ public abstract class Skill implements Listener
     
     /**
      * Constructor for pre 0.5 Updater
-     * @param instance plugin instance 
+     * 
+     * @param instance plugin instance
      * @param key of the kill
      * @param item Material/ItemID of skill item
      */
@@ -228,7 +230,7 @@ public abstract class Skill implements Listener
      */
     public boolean hasPermission(Player p, ItemStack item)
     {
-        if(item == null)
+        if (item == null)
             item = new ItemStack(Material.AIR);
         
         if (p.hasPermission("shadow." + getName()))
