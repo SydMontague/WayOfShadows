@@ -5,6 +5,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
@@ -16,6 +17,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import de.craftlancer.wayofshadows.WayOfShadows;
@@ -75,13 +77,20 @@ public class Leap extends Skill
             vec.add(new Vector(0, 0.5, 0));
             
             int level = plugin.getLevel(p, getLevelSys());
+            BlockIterator it = new BlockIterator(p, (int) distance);
+            while (it.hasNext())
+                if (it.next().getType() != Material.AIR)
+                    return;
+            
+            Location target = loc.add(vec);
+            for (int i = 0; target.getBlock().getType().isSolid() && i < 3; i++)
+                target = target.add(0, 1, 0);
+            
+            if (target.getBlock().getType().isSolid())
+                return;
             
             loc.getWorld().playEffect(p.getLocation(), Effect.ENDER_SIGNAL, 0);
             loc.getWorld().playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1, 1);
-            
-            Location target = loc.add(vec);
-            while (target.getBlock().getType().isSolid())
-                target = target.add(0, 1, 0);
             
             p.teleport(target, TeleportCause.PLUGIN);
             

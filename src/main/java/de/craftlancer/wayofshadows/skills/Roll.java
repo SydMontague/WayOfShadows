@@ -19,12 +19,14 @@ import de.craftlancer.wayofshadows.utils.ValueWrapper;
 public class Roll extends Skill
 {
     private ValueWrapper damageMod; // x = level, y = ticks between sneak and damage event
+    private String message = null;
     
     public Roll(WayOfShadows instance, String key)
     {
         super(instance, key);
         FileConfiguration config = instance.getConfig();
         damageMod = new ValueWrapper(config.getString(key + ".damageMod", "y/5+0.2"));
+        message = config.getString(key + ".message", null);
     }
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -56,6 +58,10 @@ public class Roll extends Skill
             return;
 
         event.setDamage(mod * event.getDamage());
+        
+        if(message != null)
+            ((Player) entity).sendMessage(message);
+            
     }
     
     @Override
