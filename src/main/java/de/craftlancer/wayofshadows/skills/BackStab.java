@@ -89,6 +89,9 @@ public class BackStab extends Skill
         ItemStack item;
         Player p;
         
+        if(e.getDamager().equals(e.getEntity()))
+            return;
+        
         if (e.getDamager().getType().equals(EntityType.PLAYER))
         {
             p = (Player) e.getDamager();
