@@ -1,7 +1,6 @@
 package de.craftlancer.wayofshadows.skills;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,16 +39,19 @@ public class Roll extends Skill
     
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDamage(EntityDamageEvent event)
-    {
-        Entity entity = event.getEntity();
-        
-        if (entity.getType() != EntityType.PLAYER || event.getCause() != DamageCause.FALL)
+    {        
+        if (event.getEntity().getType() != EntityType.PLAYER || event.getCause() != DamageCause.FALL)
             return;
         
-        if (!event.getEntity().hasMetadata("shadow." + getName() + ".sneaktime"))
+        Player entity = (Player) event.getEntity();
+        
+        if (!entity.hasMetadata("shadow." + getName() + ".sneaktime"))
             return;
         
-        int level = plugin.getLevel((Player) entity, getLevelSys());
+        if (hasPermission(entity, entity.getItemInHand()))
+            return;
+        
+        int level = plugin.getLevel(entity, getLevelSys());
         
         long delta = entity.getWorld().getFullTime() - entity.getMetadata("shadow." + getName() + ".sneaktime").get(0).asLong();
         double mod = damageMod.getValue(level, delta);
@@ -60,7 +62,7 @@ public class Roll extends Skill
         event.setDamage(mod * event.getDamage());
         
         if(message != null)
-            ((Player) entity).sendMessage(message);
+            entity.sendMessage(message);
             
     }
     
