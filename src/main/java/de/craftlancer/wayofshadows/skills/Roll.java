@@ -48,7 +48,7 @@ public class Roll extends Skill
         if (!entity.hasMetadata("shadow." + getName() + ".sneaktime"))
             return;
         
-        if (hasPermission(entity, entity.getItemInHand()))
+        if (!hasPermission(entity, entity.getItemInHand()))
             return;
         
         int level = plugin.getLevel(entity, getLevelSys());
